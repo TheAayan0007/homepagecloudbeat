@@ -256,6 +256,71 @@ footer { border-top: 1px solid var(--border); padding: 50px 48px; max-width: 120
 .reveal { opacity: 0; transform: translateY(30px); transition: opacity .7s ease, transform .7s ease; }
 .reveal.visible { opacity: 1; transform: none; }
 
+/* ══════════════════════════════════════════
+   ARCHITECTURE / FLOWCHART SECTION
+══════════════════════════════════════════ */
+#architecture { background: var(--darker); max-width: 100%; position: relative; overflow: hidden; }
+#architecture::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(to right, transparent, var(--purple), transparent); }
+#architecture .inner { max-width: 1280px; margin: 0 auto; padding: 120px 48px 100px; }
+
+/* — Tab switcher — */
+.arch-tabs { display: flex; gap: 0; border: 1px solid var(--border); margin-top: 50px; overflow: hidden; }
+.arch-tab { flex: 1; padding: 14px 20px; background: none; border: none; border-right: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-dim); cursor: pointer; transition: all .2s; }
+.arch-tab:last-child { border-right: none; }
+.arch-tab.active { background: rgba(255,107,26,.08); color: var(--orange); }
+.arch-tab:hover:not(.active) { background: rgba(255,255,255,.03); color: var(--text); }
+
+/* — Diagram canvas — */
+.arch-diagram { margin-top: 0; padding: 48px; background: var(--surface); border: 1px solid var(--border); border-top: none; position: relative; overflow: hidden; }
+.arch-panel { display: none; }
+.arch-panel.active { display: block; }
+.arch-canvas { position: relative; width: 100%; }
+
+/* — SVG diagram base — */
+.arch-svg { width: 100%; display: block; }
+
+/* — Animated data packets on SVG paths — */
+@keyframes dashFlow { to { stroke-dashoffset: -40; } }
+@keyframes dashFlowRev { to { stroke-dashoffset: 40; } }
+.flow-line-anim { animation: dashFlow 1.8s linear infinite; }
+.flow-line-anim-rev { animation: dashFlowRev 1.8s linear infinite; }
+.flow-line-slow { animation: dashFlow 3s linear infinite; }
+.flow-line-fast { animation: dashFlow 1s linear infinite; }
+
+/* — Packet dot animation along paths — */
+.packet { animation: packetMove var(--dur, 2s) linear infinite var(--delay, 0s); }
+@keyframes packetMove { 0%{ offset-distance:0%; opacity:0; } 5%{ opacity:1; } 90%{ opacity:1; } 100%{ offset-distance:100%; opacity:0; } }
+
+/* — Detail cards below diagram — */
+.arch-detail-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; background: var(--border); margin-top: 2px; }
+.arch-detail-card { background: var(--dark); padding: 24px 22px; cursor: pointer; transition: background .2s; border-top: 2px solid transparent; }
+.arch-detail-card:hover { background: var(--surface2); }
+.arch-detail-card.active { background: var(--surface2); border-top-color: var(--orange); }
+.adc-icon { font-size: 20px; margin-bottom: 10px; }
+.adc-title { font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 2px; color: #fff; margin-bottom: 6px; }
+.adc-body { font-size: 11px; color: var(--text-dim); line-height: 1.7; }
+.adc-steps { margin-top: 10px; display: flex; flex-direction: column; gap: 5px; }
+.adc-step { display: flex; gap: 8px; font-size: 10px; font-family: 'JetBrains Mono', monospace; color: var(--text-dim); line-height: 1.5; }
+.adc-step-n { background: var(--surface); border: 1px solid var(--border); padding: 1px 5px; font-size: 9px; flex-shrink: 0; color: var(--orange); }
+
+/* — Legend row — */
+.arch-legend { display: flex; flex-wrap: wrap; gap: 6px 24px; margin-top: 22px; }
+.leg { display: flex; align-items: center; gap: 7px; font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); }
+.leg-line { width: 28px; height: 2px; flex-shrink: 0; }
+.leg-line.audio { background: var(--orange); }
+.leg-line.firebase { background: var(--amber); border-top: 1px dashed var(--amber); background: none; border-bottom: none; height: 0; border-top: 2px dashed var(--amber); }
+.leg-line.drive { background: var(--cyan); }
+.leg-line.api { background: var(--purple); border-top: 1px dotted var(--purple); background: none; height: 0; border-top: 2px dotted var(--purple); }
+.leg-line.bi { background: none; height: 0; border-top: 2px solid var(--green); }
+
+/* — Node callout tooltip — */
+.node-tooltip { position: absolute; background: var(--surface); border: 1px solid rgba(255,107,26,.4); padding: 12px 16px; font-size: 11px; color: var(--text); max-width: 220px; pointer-events: none; z-index: 10; opacity: 0; transition: opacity .2s; }
+.node-tooltip.visible { opacity: 1; }
+.node-tooltip-title { font-family: 'Bebas Neue', sans-serif; font-size: 15px; letter-spacing: 2px; color: var(--orange); margin-bottom: 4px; }
+
+/* — Jam session specific — */
+.jam-code-badge { display: inline-block; font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 8px; padding: 6px 20px; border: 1px solid rgba(245,158,11,.5); color: var(--amber); background: rgba(245,158,11,.06); }
+
 /* ── RESPONSIVE ── */
 @media(max-width:900px){
   nav{padding:16px 24px;}
@@ -286,6 +351,7 @@ footer { border-top: 1px solid var(--border); padding: 50px 48px; max-width: 120
   </div>
   <div class="nav-links">
     <a href="#how">How It Works</a>
+    <a href="#architecture">Architecture</a>
     <a href="#integrations">Integrations</a>
     <a href="#features">Features</a>
     <a href="#disclaimer">Disclaimer</a>
@@ -599,6 +665,546 @@ footer { border-top: 1px solid var(--border); padding: 50px 48px; max-width: 120
     </div>
   </div>
 </section>
+
+<!-- ════════════════════════════════════════════
+     ARCHITECTURE FLOWCHART SECTION
+════════════════════════════════════════════ -->
+<div id="architecture">
+  <div class="inner">
+    <div class="section-label reveal">// System Architecture</div>
+    <h2 class="section-title reveal">How Every Byte<br>Flows — In Depth.</h2>
+    <p class="section-sub reveal">Every data path, every API call, every handshake — laid bare. CloudBeat has no hidden servers. Here is the complete wiring diagram of exactly how it works, from the moment you hit play to the moment your friend hears the same song across the world.</p>
+
+    <!-- TAB SWITCHER -->
+    <div class="arch-tabs reveal">
+      <button class="arch-tab active" onclick="switchArch('solo')">Solo Playback</button>
+      <button class="arch-tab" onclick="switchArch('jam')">Jam Session</button>
+      <button class="arch-tab" onclick="switchArch('drive')">Google Drive Mode</button>
+    </div>
+
+    <!-- DIAGRAM AREA -->
+    <div class="arch-diagram">
+
+      <!-- ══ PANEL 1: SOLO PLAYBACK ══ -->
+      <div class="arch-panel active" id="arch-solo">
+        <div class="arch-canvas">
+          <svg class="arch-svg" viewBox="0 0 1100 520" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arrowO" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#ff6b1a"/></marker>
+              <marker id="arrowP" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#a78bfa"/></marker>
+              <marker id="arrowC" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#06b6d4"/></marker>
+              <marker id="arrowG" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#22c55e"/></marker>
+            </defs>
+
+            <!-- ── ZONE: BROWSER ── -->
+            <rect x="10" y="200" width="500" height="290" rx="10" fill="none" stroke="rgba(167,139,250,0.2)" stroke-width="1" stroke-dasharray="6 4"/>
+            <text x="22" y="220" fill="rgba(167,139,250,0.5)" font-family="'JetBrains Mono',monospace" font-size="10" letter-spacing="3">USER BROWSER</text>
+
+            <!-- ── ZONE: EXTERNAL ── -->
+            <rect x="580" y="20" width="500" height="480" rx="10" fill="none" stroke="rgba(255,107,26,0.15)" stroke-width="1" stroke-dasharray="6 4"/>
+            <text x="594" y="40" fill="rgba(255,107,26,0.4)" font-family="'JetBrains Mono',monospace" font-size="10" letter-spacing="3">EXTERNAL SERVICES (NO CLOUDBEAT SERVER)</text>
+
+            <!-- ═══ NODES ═══ -->
+            <!-- User -->
+            <rect x="30" y="250" width="140" height="60" rx="6" fill="#0c0f16" stroke="rgba(167,139,250,0.5)" stroke-width="1"/>
+            <text x="100" y="275" text-anchor="middle" fill="#a78bfa" font-family="'Bebas Neue',sans-serif" font-size="18" letter-spacing="2">USER</text>
+            <text x="100" y="295" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">clicks play</text>
+
+            <!-- CloudBeat App -->
+            <rect x="230" y="240" width="230" height="80" rx="6" fill="#0c0f16" stroke="rgba(255,107,26,0.5)" stroke-width="1.5"/>
+            <text x="345" y="268" text-anchor="middle" fill="#ff6b1a" font-family="'Bebas Neue',sans-serif" font-size="20" letter-spacing="3">CLOUDBEAT APP</text>
+            <text x="345" y="287" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">browser-only · zero server · pure JS</text>
+            <text x="345" y="303" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">Web Audio API · EQ · Queue · Playlists</text>
+
+            <!-- Web Audio API -->
+            <rect x="30" y="380" width="200" height="56" rx="6" fill="#0c0f16" stroke="rgba(255,107,26,0.3)" stroke-width="1"/>
+            <text x="130" y="405" text-anchor="middle" fill="#f59e0b" font-family="'Bebas Neue',sans-serif" font-size="16" letter-spacing="2">WEB AUDIO API</text>
+            <text x="130" y="423" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">10-band EQ · local processing</text>
+
+            <!-- Speakers -->
+            <rect x="270" y="390" width="130" height="46" rx="6" fill="#0c0f16" stroke="rgba(34,197,94,0.3)" stroke-width="1"/>
+            <text x="335" y="409" text-anchor="middle" fill="#22c55e" font-family="'Bebas Neue',sans-serif" font-size="15" letter-spacing="2">SPEAKERS</text>
+            <text x="335" y="426" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">your device output</text>
+
+            <!-- GitHub API -->
+            <rect x="600" y="50" width="200" height="60" rx="6" fill="#0c0f16" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <text x="700" y="76" text-anchor="middle" fill="#c4cdd8" font-family="'Bebas Neue',sans-serif" font-size="18" letter-spacing="2">GITHUB API</text>
+            <text x="700" y="95" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">api.github.com · lists files</text>
+
+            <!-- GitHub Raw CDN -->
+            <rect x="600" y="160" width="200" height="60" rx="6" fill="#0c0f16" stroke="rgba(255,107,26,0.4)" stroke-width="1"/>
+            <text x="700" y="185" text-anchor="middle" fill="#ff6b1a" font-family="'Bebas Neue',sans-serif" font-size="16" letter-spacing="2">GITHUB RAW CDN</text>
+            <text x="700" y="203" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">raw.githubusercontent.com · streams audio</text>
+
+            <!-- Your Repo -->
+            <rect x="860" y="100" width="190" height="80" rx="6" fill="#0c0f16" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+            <text x="955" y="128" text-anchor="middle" fill="#c4cdd8" font-family="'Bebas Neue',sans-serif" font-size="15" letter-spacing="2">YOUR REPO</text>
+            <text x="955" y="147" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">username/music</text>
+            <text x="955" y="163" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">mp3 · wav · flac · ogg</text>
+
+            <!-- localStorage -->
+            <rect x="600" y="300" width="200" height="60" rx="6" fill="#0c0f16" stroke="rgba(34,197,94,0.3)" stroke-width="1"/>
+            <text x="700" y="325" text-anchor="middle" fill="#22c55e" font-family="'Bebas Neue',sans-serif" font-size="15" letter-spacing="2">LOCALSTORAGE</text>
+            <text x="700" y="343" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">playlists · likes · settings · stats</text>
+
+            <!-- ═══ ANIMATED FLOW LINES ═══ -->
+            <!-- User → CloudBeat -->
+            <line x1="170" y1="280" x2="228" y2="280" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arrowP)"/>
+            <!-- CloudBeat → GitHub API (request: list files) -->
+            <path d="M460 265 Q540 265 540 80 Q540 80 598 80" fill="none" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#arrowP)"
+              style="animation: dashFlow 2s linear infinite"/>
+            <!-- GitHub API → CloudBeat (file list response) -->
+            <path d="M598 95 Q530 95 530 300 Q530 310 462 300" fill="none" stroke="#a78bfa" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#arrowP)" opacity="0.5"
+              style="animation: dashFlowRev 2s linear infinite"/>
+
+            <!-- GitHub API ↔ GitHub Repo -->
+            <path d="M800 80 L858 130" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#arrowG)" style="animation: dashFlow 2s linear infinite"/>
+            <path d="M858 150 L800 105" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#arrowG)" opacity="0.5" style="animation: dashFlowRev 2s linear infinite"/>
+
+            <!-- CloudBeat → GitHub Raw CDN (audio fetch) -->
+            <path d="M460 295 Q540 295 540 190 Q540 190 598 190" fill="none" stroke="#ff6b1a" stroke-width="2" stroke-dasharray="8 4" marker-end="url(#arrowO)"
+              style="animation: dashFlow 1.4s linear infinite"/>
+
+            <!-- GitHub Raw CDN → CloudBeat (audio stream) -->
+            <path d="M598 210 Q520 210 520 330 Q520 340 462 320" fill="none" stroke="#ff6b1a" stroke-width="2.5" marker-end="url(#arrowO)"
+              style="animation: dashFlow 0.8s linear infinite"/>
+
+            <!-- GitHub Raw CDN ↔ Repo -->
+            <path d="M800 190 L858 160" fill="none" stroke="rgba(255,107,26,0.3)" stroke-width="1" marker-end="url(#arrowO)" style="animation: dashFlow 1.4s linear infinite"/>
+
+            <!-- CloudBeat → Web Audio -->
+            <path d="M280 320 L230 380" fill="none" stroke="#ff6b1a" stroke-width="1.5" marker-end="url(#arrowO)" style="animation: dashFlow 1s linear infinite"/>
+
+            <!-- Web Audio → Speakers -->
+            <line x1="230" y1="413" x2="268" y2="413" stroke="#22c55e" stroke-width="1.5" marker-end="url(#arrowG)" style="animation: dashFlow 1.2s linear infinite"/>
+
+            <!-- CloudBeat → localStorage -->
+            <path d="M460 310 Q540 310 540 330 Q540 330 598 330" fill="none" stroke="#22c55e" stroke-width="1" stroke-dasharray="5 4" marker-end="url(#arrowG)" style="animation: dashFlow 3s linear infinite"/>
+
+            <!-- ═══ LABELS ON ARROWS ═══ -->
+            <rect x="474" y="256" width="60" height="16" rx="2" fill="#07090d"/>
+            <text x="504" y="267" text-anchor="middle" fill="#a78bfa" font-family="'JetBrains Mono',monospace" font-size="8">list files</text>
+
+            <rect x="474" y="186" width="80" height="16" rx="2" fill="#07090d"/>
+            <text x="514" y="197" text-anchor="middle" fill="#ff6b1a" font-family="'JetBrains Mono',monospace" font-size="8">fetch audio</text>
+
+            <rect x="464" y="326" width="94" height="16" rx="2" fill="#07090d"/>
+            <text x="511" y="337" text-anchor="middle" fill="#ff6b1a" font-family="'JetBrains Mono',monospace" font-size="8">audio stream (bytes)</text>
+
+            <rect x="508" y="326" width="90" height="16" rx="2" fill="#07090d"/>
+            <text x="553" y="337" text-anchor="middle" fill="#22c55e" font-family="'JetBrains Mono',monospace" font-size="8" opacity="0.7">save prefs</text>
+          </svg>
+        </div>
+
+        <!-- DETAIL CARDS: Solo -->
+        <div class="arch-detail-grid">
+          <div class="arch-detail-card active" id="solo-c1" onclick="soloCard(1)">
+            <div class="adc-icon">🔍</div>
+            <div class="adc-title">Step 1 — Scan Repo</div>
+            <div class="adc-body">CloudBeat calls the GitHub API to scan your repository and build the song list.</div>
+            <div class="adc-steps">
+              <div class="adc-step"><div class="adc-step-n">01</div><span>GET api.github.com/repos/{owner}/{repo}/contents</span></div>
+              <div class="adc-step"><div class="adc-step-n">02</div><span>Recursively scans all folders</span></div>
+              <div class="adc-step"><div class="adc-step-n">03</div><span>Filters: .mp3 .wav .flac .ogg .m4a .aac .opus</span></div>
+              <div class="adc-step"><div class="adc-step-n">04</div><span>Builds song objects with raw URLs</span></div>
+            </div>
+          </div>
+          <div class="arch-detail-card" id="solo-c2" onclick="soloCard(2)">
+            <div class="adc-icon">📡</div>
+            <div class="adc-title">Step 2 — Stream Audio</div>
+            <div class="adc-body">The audio element's src is set to a raw GitHub URL. The browser streams it directly — no proxy, no middleware.</div>
+            <div class="adc-steps">
+              <div class="adc-step"><div class="adc-step-n">01</div><span>audio.crossOrigin = 'anonymous'</span></div>
+              <div class="adc-step"><div class="adc-step-n">02</div><span>audio.src = raw.githubusercontent.com/...</span></div>
+              <div class="adc-step"><div class="adc-step-n">03</div><span>audio.load() → wait for canplay event</span></div>
+              <div class="adc-step"><div class="adc-step-n">04</div><span>audio.play() → stream begins</span></div>
+            </div>
+          </div>
+          <div class="arch-detail-card" id="solo-c3" onclick="soloCard(3)">
+            <div class="adc-icon">🎛</div>
+            <div class="adc-title">Step 3 — EQ Processing</div>
+            <div class="adc-body">The raw audio stream passes through a 10-band equalizer chain built entirely in the Web Audio API before reaching your speakers.</div>
+            <div class="adc-steps">
+              <div class="adc-step"><div class="adc-step-n">01</div><span>AudioContext.createMediaElementSource(audio)</span></div>
+              <div class="adc-step"><div class="adc-step-n">02</div><span>10× BiquadFilterNode (lowshelf → peaking → highshelf)</span></div>
+              <div class="adc-step"><div class="adc-step-n">03</div><span>Chain: source → eq[0] → … → eq[9] → destination</span></div>
+              <div class="adc-step"><div class="adc-step-n">04</div><span>All processing in-browser, zero latency added</span></div>
+            </div>
+          </div>
+          <div class="arch-detail-card" id="solo-c4" onclick="soloCard(4)">
+            <div class="adc-icon">💾</div>
+            <div class="adc-title">Step 4 — Save State</div>
+            <div class="adc-body">Your playlists, liked songs, EQ settings, volume, and listen stats are persisted to localStorage — or synced to Google Drive if signed in.</div>
+            <div class="adc-steps">
+              <div class="adc-step"><div class="adc-step-n">01</div><span>Debounced save on every meaningful action</span></div>
+              <div class="adc-step"><div class="adc-step-n">02</div><span>localStorage: cb_settings, cb_playlists, cb_stats</span></div>
+              <div class="adc-step"><div class="adc-step-n">03</div><span>Drive sync: writes cloudbeat.json to AppData</span></div>
+              <div class="adc-step"><div class="adc-step-n">04</div><span>No data ever leaves your own accounts</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ PANEL 2: JAM SESSION ══ -->
+      <div class="arch-panel" id="arch-jam">
+        <div class="arch-canvas">
+          <svg class="arch-svg" viewBox="0 0 1100 600" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arrowO2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#ff6b1a"/></marker>
+              <marker id="arrowA2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#f59e0b"/></marker>
+              <marker id="arrowG2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#22c55e"/></marker>
+              <marker id="arrowP2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#a78bfa"/></marker>
+            </defs>
+
+            <!-- ── HOST BROWSER ZONE ── -->
+            <rect x="10" y="60" width="330" height="500" rx="10" fill="none" stroke="rgba(167,139,250,0.2)" stroke-width="1" stroke-dasharray="6 4"/>
+            <text x="22" y="80" fill="rgba(167,139,250,0.45)" font-family="'JetBrains Mono',monospace" font-size="10" letter-spacing="3">HOST BROWSER</text>
+
+            <!-- ── FIREBASE ZONE (CENTER) ── -->
+            <rect x="400" y="140" width="280" height="300" rx="10" fill="none" stroke="rgba(245,158,11,0.25)" stroke-width="1" stroke-dasharray="6 4"/>
+            <text x="414" y="160" fill="rgba(245,158,11,0.5)" font-family="'JetBrains Mono',monospace" font-size="10" letter-spacing="3">YOUR FIREBASE (REALTIME DB)</text>
+
+            <!-- ── USER 2 BROWSER ZONE ── -->
+            <rect x="750" y="60" width="330" height="500" rx="10" fill="none" stroke="rgba(34,197,94,0.2)" stroke-width="1" stroke-dasharray="6 4"/>
+            <text x="762" y="80" fill="rgba(34,197,94,0.45)" font-family="'JetBrains Mono',monospace" font-size="10" letter-spacing="3">LISTENER BROWSER</text>
+
+            <!-- GITHUB RAW (top center) -->
+            <rect x="430" y="30" width="220" height="52" rx="6" fill="#0c0f16" stroke="rgba(255,107,26,0.3)" stroke-width="1"/>
+            <text x="540" y="53" text-anchor="middle" fill="#ff6b1a" font-family="'Bebas Neue',sans-serif" font-size="17" letter-spacing="2">GITHUB RAW CDN</text>
+            <text x="540" y="69" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">raw.githubusercontent.com</text>
+
+            <!-- HOST: User 1 -->
+            <rect x="30" y="100" width="150" height="56" rx="6" fill="#0c0f16" stroke="rgba(167,139,250,0.5)" stroke-width="1"/>
+            <text x="105" y="124" text-anchor="middle" fill="#a78bfa" font-family="'Bebas Neue',sans-serif" font-size="17" letter-spacing="2">HOST / USER 1</text>
+            <text x="105" y="142" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">controls playback</text>
+
+            <!-- HOST: CloudBeat -->
+            <rect x="30" y="200" width="290" height="70" rx="6" fill="#0c0f16" stroke="rgba(255,107,26,0.5)" stroke-width="1.5"/>
+            <text x="175" y="227" text-anchor="middle" fill="#ff6b1a" font-family="'Bebas Neue',sans-serif" font-size="18" letter-spacing="3">CLOUDBEAT</text>
+            <text x="175" y="245" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">plays audio · writes jam state</text>
+            <text x="175" y="259" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">on: play · pause · seek → jamWrite()</text>
+
+            <!-- HOST: Speakers -->
+            <rect x="30" y="320" width="130" height="46" rx="6" fill="#0c0f16" stroke="rgba(34,197,94,0.3)" stroke-width="1"/>
+            <text x="95" y="339" text-anchor="middle" fill="#22c55e" font-family="'Bebas Neue',sans-serif" font-size="14" letter-spacing="2">SPEAKERS</text>
+            <text x="95" y="355" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">host hears audio</text>
+
+            <!-- HOST: Jam Code -->
+            <rect x="170" y="320" width="150" height="60" rx="6" fill="rgba(245,158,11,0.06)" stroke="rgba(245,158,11,0.4)" stroke-width="1"/>
+            <text x="245" y="343" text-anchor="middle" fill="#f59e0b" font-family="'Bebas Neue',sans-serif" font-size="14" letter-spacing="2">JAM CODE</text>
+            <text x="245" y="362" text-anchor="middle" fill="#f59e0b" font-family="'Bebas Neue',sans-serif" font-size="20" letter-spacing="8">AB3X7</text>
+            <text x="245" y="375" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="8">shared with friends</text>
+
+            <!-- FIREBASE: DB Node -->
+            <rect x="420" y="200" width="240" height="130" rx="6" fill="#0c0f16" stroke="rgba(245,158,11,0.4)" stroke-width="1"/>
+            <text x="540" y="226" text-anchor="middle" fill="#f59e0b" font-family="'Bebas Neue',sans-serif" font-size="17" letter-spacing="2">REALTIME DATABASE</text>
+            <text x="540" y="246" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">/jam/AB3X7/state</text>
+            <!-- JSON preview -->
+            <rect x="432" y="256" width="216" height="64" rx="4" fill="#070910"/>
+            <text x="442" y="272" fill="#22c55e" font-family="'JetBrains Mono',monospace" font-size="8">trackName: "song.mp3"</text>
+            <text x="442" y="286" fill="#22c55e" font-family="'JetBrains Mono',monospace" font-size="8">position:  142.3</text>
+            <text x="442" y="300" fill="#22c55e" font-family="'JetBrains Mono',monospace" font-size="8">paused:    false</text>
+            <text x="442" y="314" fill="#22c55e" font-family="'JetBrains Mono',monospace" font-size="8">ts:        1719234580124</text>
+
+            <!-- FIREBASE: Push notification indicator -->
+            <rect x="420" y="360" width="240" height="56" rx="6" fill="#0c0f16" stroke="rgba(245,158,11,0.2)" stroke-width="1"/>
+            <text x="540" y="382" text-anchor="middle" fill="#f59e0b" font-family="'Bebas Neue',sans-serif" font-size="14" letter-spacing="2">PUSH TO SUBSCRIBERS</text>
+            <text x="540" y="398" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="8">onValue() → delta dispatched ~50-200ms</text>
+            <text x="540" y="411" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="8">websocket · no polling needed</text>
+
+            <!-- USER 2: Entry -->
+            <rect x="810" y="100" width="250" height="56" rx="6" fill="#0c0f16" stroke="rgba(34,197,94,0.5)" stroke-width="1"/>
+            <text x="935" y="124" text-anchor="middle" fill="#22c55e" font-family="'Bebas Neue',sans-serif" font-size="17" letter-spacing="2">USER 2 (LISTENER)</text>
+            <text x="935" y="142" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">enters jam code AB3X7</text>
+
+            <!-- USER 2: CloudBeat -->
+            <rect x="770" y="200" width="290" height="70" rx="6" fill="#0c0f16" stroke="rgba(255,107,26,0.5)" stroke-width="1.5"/>
+            <text x="915" y="227" text-anchor="middle" fill="#ff6b1a" font-family="'Bebas Neue',sans-serif" font-size="18" letter-spacing="3">CLOUDBEAT</text>
+            <text x="915" y="245" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">reads jam state · applies lag correction</text>
+            <text x="915" y="259" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">seeks to: position + networkLag</text>
+
+            <!-- USER 2: Speakers -->
+            <rect x="770" y="320" width="130" height="46" rx="6" fill="#0c0f16" stroke="rgba(34,197,94,0.3)" stroke-width="1"/>
+            <text x="835" y="339" text-anchor="middle" fill="#22c55e" font-family="'Bebas Neue',sans-serif" font-size="14" letter-spacing="2">SPEAKERS</text>
+            <text x="835" y="355" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">hears same audio ~50ms later</text>
+
+            <!-- LAG CORRECTION NOTE -->
+            <rect x="770" y="400" width="290" height="56" rx="6" fill="rgba(6,182,212,0.05)" stroke="rgba(6,182,212,0.2)" stroke-width="1"/>
+            <text x="915" y="422" text-anchor="middle" fill="#06b6d4" font-family="'Bebas Neue',sans-serif" font-size="13" letter-spacing="2">LAG CORRECTION</text>
+            <text x="915" y="438" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="8">lag = (Date.now() - state.ts) / 1000</text>
+            <text x="915" y="451" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="8">seekTo = position + lag (max 30s)</text>
+
+            <!-- ═══ FLOW LINES ═══ -->
+            <!-- User1 → CloudBeat (host) -->
+            <line x1="105" y1="156" x2="105" y2="198" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arrowP2)" style="animation: dashFlow 1.5s linear infinite"/>
+
+            <!-- CloudBeat → GitHub Raw (both browsers fetch same URL) -->
+            <path d="M175 200 Q175 100 430 56" fill="none" stroke="#ff6b1a" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#arrowO2)" style="animation: dashFlow 1.2s linear infinite"/>
+            <path d="M915 200 Q915 100 650 56" fill="none" stroke="#ff6b1a" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#arrowO2)" style="animation: dashFlow 1.2s linear infinite 0.4s"/>
+
+            <!-- CloudBeat → Speakers (host) -->
+            <line x1="95" y1="270" x2="95" y2="318" stroke="#22c55e" stroke-width="1.5" marker-end="url(#arrowG2)" style="animation: dashFlow 1s linear infinite"/>
+
+            <!-- CloudBeat (host) → Firebase WRITE -->
+            <path d="M320 235 Q370 235 418 265" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="8 4" marker-end="url(#arrowA2)" style="animation: dashFlow 1s linear infinite"/>
+            <rect x="326" y="225" width="88" height="16" rx="2" fill="#07090d"/>
+            <text x="370" y="236" text-anchor="middle" fill="#f59e0b" font-family="'JetBrains Mono',monospace" font-size="8">write state</text>
+
+            <!-- Firebase → Push -->
+            <line x1="540" y1="330" x2="540" y2="358" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrowA2)" style="animation: dashFlow 1s linear infinite"/>
+
+            <!-- Firebase PUSH → User2 CloudBeat -->
+            <path d="M660 390 Q715 390 768 265" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="8 4" marker-end="url(#arrowA2)" style="animation: dashFlow 1s linear infinite 0.3s"/>
+            <rect x="664" y="350" width="90" height="16" rx="2" fill="#07090d"/>
+            <text x="709" y="361" text-anchor="middle" fill="#f59e0b" font-family="'JetBrains Mono',monospace" font-size="8">push delta</text>
+
+            <!-- User2 → CloudBeat -->
+            <line x1="935" y1="156" x2="935" y2="198" stroke="#22c55e" stroke-width="1.5" marker-end="url(#arrowG2)" style="animation: dashFlow 1.5s linear infinite"/>
+
+            <!-- User2 → Firebase (join room) -->
+            <path d="M810 128 Q740 128 662 200" fill="none" stroke="#f59e0b" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#arrowA2)" opacity="0.6" style="animation: dashFlow 2s linear infinite"/>
+            <rect x="720" y="118" width="72" height="16" rx="2" fill="#07090d"/>
+            <text x="756" y="129" text-anchor="middle" fill="#f59e0b" font-family="'JetBrains Mono',monospace" font-size="8">join room</text>
+
+            <!-- Jam Code arrow -->
+            <path d="M245 380 Q245 430 480 430 Q540 430 540 418" fill="none" stroke="rgba(245,158,11,0.3)" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#arrowA2)" opacity="0.5"/>
+
+            <!-- CloudBeat2 → Speakers (user2) -->
+            <line x1="835" y1="270" x2="835" y2="318" stroke="#22c55e" stroke-width="1.5" marker-end="url(#arrowG2)" style="animation: dashFlow 1s linear infinite"/>
+
+            <!-- CloudBeat2 → Lag Correction -->
+            <line x1="915" y1="270" x2="915" y2="398" stroke="#06b6d4" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#arrowG2)" opacity="0.6" style="animation: dashFlow 2s linear infinite"/>
+
+            <!-- SYNC INDICATOR -->
+            <text x="540" y="490" text-anchor="middle" fill="rgba(34,197,94,0.6)" font-family="'Bebas Neue',sans-serif" font-size="14" letter-spacing="4">BOTH BROWSERS FETCH THE SAME AUDIO DIRECTLY FROM GITHUB — FIREBASE ONLY CARRIES METADATA</text>
+          </svg>
+        </div>
+
+        <!-- DETAIL CARDS: Jam -->
+        <div class="arch-detail-grid">
+          <div class="arch-detail-card active">
+            <div class="adc-icon">🏠</div>
+            <div class="adc-title">Host starts Jam</div>
+            <div class="adc-body">Host generates a 5-char room code and begins writing their playback state to Firebase on every play, pause, and seek event.</div>
+            <div class="adc-steps">
+              <div class="adc-step"><div class="adc-step-n">01</div><span>Random room code generated (e.g. AB3X7)</span></div>
+              <div class="adc-step"><div class="adc-step-n">02</div><span>Code becomes Firebase path: /jam/AB3X7/state</span></div>
+              <div class="adc-step"><div class="adc-step-n">03</div><span>Every play/pause/seek → jamWrite() fires</span></div>
+              <div class="adc-step"><div class="adc-step-n">04</div><span>Host shares code with listeners verbally / via chat</span></div>
+            </div>
+          </div>
+          <div class="arch-detail-card">
+            <div class="adc-icon">🔥</div>
+            <div class="adc-title">Firebase state object</div>
+            <div class="adc-body">The state written to Firebase is tiny — just enough metadata for listeners to find and seek the same track. No audio bytes go through Firebase.</div>
+            <div class="adc-steps">
+              <div class="adc-step"><div class="adc-step-n">01</div><span>trackName, repoOwner, repoName, repoBranch</span></div>
+              <div class="adc-step"><div class="adc-step-n">02</div><span>repoPath (full path of the audio file)</span></div>
+              <div class="adc-step"><div class="adc-step-n">03</div><span>position (seconds), paused (bool), ts (timestamp)</span></div>
+              <div class="adc-step"><div class="adc-step-n">04</div><span>nickname · email (display only)</span></div>
+            </div>
+          </div>
+          <div class="arch-detail-card">
+            <div class="adc-icon">👂</div>
+            <div class="adc-title">Listener syncs</div>
+            <div class="adc-body">User 2 enters the code, subscribes to that Firebase path, and receives state pushes in real-time via WebSocket. Each push triggers an audio seek with lag correction.</div>
+            <div class="adc-steps">
+              <div class="adc-step"><div class="adc-step-n">01</div><span>User 2 enters code → subscribes via onValue()</span></div>
+              <div class="adc-step"><div class="adc-step-n">02</div><span>State arrives → CloudBeat loads host's repo</span></div>
+              <div class="adc-step"><div class="adc-step-n">03</div><span>Fetches same audio from GitHub Raw CDN</span></div>
+              <div class="adc-step"><div class="adc-step-n">04</div><span>Seeks to: position + (Date.now() - ts) / 1000</span></div>
+            </div>
+          </div>
+          <div class="arch-detail-card">
+            <div class="adc-icon">🎮</div>
+            <div class="adc-title">Control handoff</div>
+            <div class="adc-body">Host can grant playback control to any listener. That listener becomes the writer; the host and all others become readers until control is reclaimed.</div>
+            <div class="adc-steps">
+              <div class="adc-step"><div class="adc-step-n">01</div><span>Host writes controls/{uid}/hasControl: true to Firebase</span></div>
+              <div class="adc-step"><div class="adc-step-n">02</div><span>All clients read jamControlledUid on every sync</span></div>
+              <div class="adc-step"><div class="adc-step-n">03</div><span>Only the controller's actions trigger jamWrite()</span></div>
+              <div class="adc-step"><div class="adc-step-n">04</div><span>Host can revoke at any time</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ PANEL 3: GOOGLE DRIVE ══ -->
+      <div class="arch-panel" id="arch-drive">
+        <div class="arch-canvas">
+          <svg class="arch-svg" viewBox="0 0 1100 480" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arrowC3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#06b6d4"/></marker>
+              <marker id="arrowO3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#ff6b1a"/></marker>
+              <marker id="arrowG3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#22c55e"/></marker>
+              <marker id="arrowW3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="rgba(255,255,255,0.5)"/></marker>
+            </defs>
+
+            <!-- BROWSER ZONE -->
+            <rect x="10" y="40" width="450" height="410" rx="10" fill="none" stroke="rgba(6,182,212,0.2)" stroke-width="1" stroke-dasharray="6 4"/>
+            <text x="22" y="58" fill="rgba(6,182,212,0.45)" font-family="'JetBrains Mono',monospace" font-size="10" letter-spacing="3">YOUR BROWSER</text>
+
+            <!-- GOOGLE INFRA ZONE -->
+            <rect x="530" y="40" width="550" height="410" rx="10" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" stroke-dasharray="6 4"/>
+            <text x="544" y="58" fill="rgba(255,255,255,0.25)" font-family="'JetBrains Mono',monospace" font-size="10" letter-spacing="3">GOOGLE INFRASTRUCTURE (YOUR ACCOUNT)</text>
+
+            <!-- CloudBeat App -->
+            <rect x="30" y="80" width="410" height="70" rx="6" fill="#0c0f16" stroke="rgba(255,107,26,0.5)" stroke-width="1.5"/>
+            <text x="235" y="108" text-anchor="middle" fill="#ff6b1a" font-family="'Bebas Neue',sans-serif" font-size="20" letter-spacing="3">CLOUDBEAT APP</text>
+            <text x="235" y="128" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">browser-only · your tokens stored in memory only</text>
+            <text x="235" y="142" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">access token never written to disk or server</text>
+
+            <!-- OAuth popup -->
+            <rect x="30" y="190" width="180" height="56" rx="6" fill="#0c0f16" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+            <text x="120" y="214" text-anchor="middle" fill="#c4cdd8" font-family="'Bebas Neue',sans-serif" font-size="14" letter-spacing="2">OAUTH POPUP</text>
+            <text x="120" y="230" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">accounts.google.com</text>
+            <text x="120" y="244" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">user consents · token returned</text>
+
+            <!-- Blob URL / Audio Element -->
+            <rect x="30" y="290" width="200" height="56" rx="6" fill="#0c0f16" stroke="rgba(6,182,212,0.4)" stroke-width="1"/>
+            <text x="130" y="314" text-anchor="middle" fill="#06b6d4" font-family="'Bebas Neue',sans-serif" font-size="14" letter-spacing="2">BLOB URL</text>
+            <text x="130" y="330" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">createObjectURL(blob)</text>
+            <text x="130" y="344" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">audio.src = blob://... (local)</text>
+
+            <!-- Speakers -->
+            <rect x="260" y="300" width="160" height="46" rx="6" fill="#0c0f16" stroke="rgba(34,197,94,0.3)" stroke-width="1"/>
+            <text x="340" y="319" text-anchor="middle" fill="#22c55e" font-family="'Bebas Neue',sans-serif" font-size="14" letter-spacing="2">WEB AUDIO</text>
+            <text x="340" y="335" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">EQ → speakers</text>
+
+            <!-- Drive AppData -->
+            <rect x="30" y="390" width="410" height="46" rx="6" fill="rgba(6,182,212,0.04)" stroke="rgba(6,182,212,0.2)" stroke-width="1"/>
+            <text x="235" y="409" text-anchor="middle" fill="#06b6d4" font-family="'Bebas Neue',sans-serif" font-size="13" letter-spacing="2">DRIVE APPDATA SYNC</text>
+            <text x="235" y="426" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="8">cloudbeat.json: playlists + likes + settings · private · invisible to all Drive apps</text>
+
+            <!-- GOOGLE: OAuth Server -->
+            <rect x="550" y="80" width="220" height="60" rx="6" fill="#0c0f16" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+            <text x="660" y="106" text-anchor="middle" fill="#c4cdd8" font-family="'Bebas Neue',sans-serif" font-size="16" letter-spacing="2">GOOGLE OAUTH</text>
+            <text x="660" y="124" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">oauth2.googleapis.com · token grant</text>
+
+            <!-- Drive API -->
+            <rect x="550" y="190" width="220" height="60" rx="6" fill="#0c0f16" stroke="rgba(6,182,212,0.4)" stroke-width="1"/>
+            <text x="660" y="216" text-anchor="middle" fill="#06b6d4" font-family="'Bebas Neue',sans-serif" font-size="16" letter-spacing="2">DRIVE API v3</text>
+            <text x="660" y="234" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">drive.googleapis.com · list + fetch</text>
+
+            <!-- Your Drive Files -->
+            <rect x="820" y="80" width="240" height="220" rx="6" fill="#0c0f16" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+            <text x="940" y="106" text-anchor="middle" fill="#c4cdd8" font-family="'Bebas Neue',sans-serif" font-size="15" letter-spacing="2">YOUR DRIVE</text>
+            <text x="940" y="125" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">your personal Google Drive account</text>
+            <!-- File icons -->
+            <rect x="834" y="140" width="210" height="24" rx="3" fill="#121720"/>
+            <text x="848" y="156" fill="#f59e0b" font-family="'JetBrains Mono',monospace" font-size="9">📁 /My Music/</text>
+            <rect x="834" y="170" width="210" height="20" rx="3" fill="#0c0f16"/>
+            <text x="856" y="184" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="8">🎵 favourite.mp3</text>
+            <rect x="834" y="194" width="210" height="20" rx="3" fill="#0c0f16"/>
+            <text x="856" y="208" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="8">🎵 demo_track.wav</text>
+            <rect x="834" y="218" width="210" height="20" rx="3" fill="#0c0f16"/>
+            <text x="856" y="232" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="8">🎵 recording.flac</text>
+            <rect x="834" y="242" width="210" height="20" rx="3" fill="rgba(6,182,212,0.06)" stroke="rgba(6,182,212,0.2)" stroke-width="0.5"/>
+            <text x="856" y="256" fill="#06b6d4" font-family="'JetBrains Mono',monospace" font-size="8">📄 cloudbeat.json (AppData)</text>
+            <text x="940" y="288" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="8">private · your data only · no external access</text>
+
+            <!-- ═══ FLOW LINES ═══ -->
+            <!-- CloudBeat → OAuth popup -->
+            <line x1="120" y1="150" x2="120" y2="188" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arrowW3)" style="animation: dashFlow 2s linear infinite"/>
+
+            <!-- OAuth popup → Google OAuth -->
+            <path d="M210 218 Q380 218 380 110 Q380 110 548 110" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#arrowW3)" style="animation: dashFlow 1.8s linear infinite"/>
+            <rect x="360" y="100" width="72" height="16" rx="2" fill="#07090d"/>
+            <text x="396" y="111" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="'JetBrains Mono',monospace" font-size="8">auth request</text>
+
+            <!-- OAuth → CloudBeat (token back) -->
+            <path d="M548 130 Q360 130 360 155 Q360 155 240 155 L240 150" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#arrowW3)" opacity="0.7" style="animation: dashFlowRev 1.8s linear infinite"/>
+            <rect x="406" y="138" width="72" height="16" rx="2" fill="#07090d"/>
+            <text x="442" y="149" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="'JetBrains Mono',monospace" font-size="8">access token</text>
+
+            <!-- CloudBeat → Drive API (list files) -->
+            <path d="M440 130 Q495 130 495 220 Q495 220 548 220" fill="none" stroke="#06b6d4" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#arrowC3)" style="animation: dashFlow 1.4s linear infinite"/>
+            <rect x="452" y="195" width="72" height="16" rx="2" fill="#07090d"/>
+            <text x="488" y="206" text-anchor="middle" fill="#06b6d4" font-family="'JetBrains Mono',monospace" font-size="8">list files</text>
+
+            <!-- Drive API ↔ Drive -->
+            <line x1="770" y1="220" x2="818" y2="180" stroke="rgba(6,182,212,0.3)" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#arrowC3)" style="animation: dashFlow 1.4s linear infinite"/>
+            <line x1="818" y1="200" x2="770" y2="240" stroke="rgba(6,182,212,0.3)" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#arrowC3)" opacity="0.5" style="animation: dashFlowRev 1.4s linear infinite"/>
+
+            <!-- Drive API → CloudBeat (file as blob) -->
+            <path d="M548 240 Q495 240 495 310 Q495 310 440 320" fill="none" stroke="#ff6b1a" stroke-width="2" marker-end="url(#arrowO3)" style="animation: dashFlow 0.9s linear infinite"/>
+            <rect x="458" y="268" width="78" height="16" rx="2" fill="#07090d"/>
+            <text x="497" y="279" text-anchor="middle" fill="#ff6b1a" font-family="'JetBrains Mono',monospace" font-size="8">file blob bytes</text>
+
+            <!-- Blob → Web Audio -->
+            <line x1="230" y1="323" x2="258" y2="323" stroke="#06b6d4" stroke-width="1.5" marker-end="url(#arrowC3)" style="animation: dashFlow 1s linear infinite"/>
+
+            <!-- CloudBeat → Drive AppData (sync) -->
+            <line x1="235" y1="388" x2="235" y2="370" stroke="#06b6d4" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#arrowC3)" opacity="0.6" style="animation: dashFlow 3s linear infinite"/>
+            <!-- Drive AppData → actual Drive -->
+            <path d="M440 413 Q660 413 820 270" fill="none" stroke="#06b6d4" stroke-width="1" stroke-dasharray="4 4" opacity="0.3" marker-end="url(#arrowC3)" style="animation: dashFlow 3s linear infinite"/>
+
+            <text x="555" y="460" text-anchor="middle" fill="rgba(34,197,94,0.5)" font-family="'Bebas Neue',sans-serif" font-size="11" letter-spacing="3">AUDIO NEVER LEAVES GOOGLE'S SERVERS TO CLOUDBEAT — BLOB GOES DIRECTLY TO YOUR BROWSER'S AUDIO ELEMENT</text>
+          </svg>
+        </div>
+
+        <!-- DETAIL CARDS: Drive -->
+        <div class="arch-detail-grid">
+          <div class="arch-detail-card active">
+            <div class="adc-icon">🔐</div>
+            <div class="adc-title">OAuth 2.0 Sign-in</div>
+            <div class="adc-body">Google handles the entire authentication flow. CloudBeat never sees your password — only the access token that Google grants.</div>
+            <div class="adc-steps">
+              <div class="adc-step"><div class="adc-step-n">01</div><span>CloudBeat opens accounts.google.com popup</span></div>
+              <div class="adc-step"><div class="adc-step-n">02</div><span>You consent to Drive file access</span></div>
+              <div class="adc-step"><div class="adc-step-n">03</div><span>Google returns an access token to the browser</span></div>
+              <div class="adc-step"><div class="adc-step-n">04</div><span>Token stored in JS memory only — never on disk</span></div>
+            </div>
+          </div>
+          <div class="arch-detail-card">
+            <div class="adc-icon">📋</div>
+            <div class="adc-title">File Discovery</div>
+            <div class="adc-body">CloudBeat calls the Drive API to list your audio and video files. It scans folders you navigate and shows them in the Drive view.</div>
+            <div class="adc-steps">
+              <div class="adc-step"><div class="adc-step-n">01</div><span>GET drive.googleapis.com/v3/files</span></div>
+              <div class="adc-step"><div class="adc-step-n">02</div><span>Filter: mimeType contains 'audio/' or 'video/'</span></div>
+              <div class="adc-step"><div class="adc-step-n">03</div><span>Recursive folder navigation on demand</span></div>
+              <div class="adc-step"><div class="adc-step-n">04</div><span>File metadata only — no content yet</span></div>
+            </div>
+          </div>
+          <div class="arch-detail-card">
+            <div class="adc-icon">💧</div>
+            <div class="adc-title">Blob Streaming</div>
+            <div class="adc-body">When you play a Drive file, CloudBeat fetches it as a binary Blob via the Drive API and creates a local object URL. No audio data passes through any CloudBeat server.</div>
+            <div class="adc-steps">
+              <div class="adc-step"><div class="adc-step-n">01</div><span>fetch Drive file download URL with auth header</span></div>
+              <div class="adc-step"><div class="adc-step-n">02</div><span>Response streamed as a Blob</span></div>
+              <div class="adc-step"><div class="adc-step-n">03</div><span>URL.createObjectURL(blob) → blob://...</span></div>
+              <div class="adc-step"><div class="adc-step-n">04</div><span>audio.src = blob:// → plays locally, no CORS issue</span></div>
+            </div>
+          </div>
+          <div class="arch-detail-card">
+            <div class="adc-icon">☁️</div>
+            <div class="adc-title">AppData Sync</div>
+            <div class="adc-body">Your playlists, liked songs, EQ presets, and settings are saved to a hidden cloudbeat.json file in your Drive's AppData folder — invisible to all other Drive apps.</div>
+            <div class="adc-steps">
+              <div class="adc-step"><div class="adc-step-n">01</div><span>Writes to Drive AppData (appDataFolder scope)</span></div>
+              <div class="adc-step"><div class="adc-step-n">02</div><span>Not visible in your regular Drive file list</span></div>
+              <div class="adc-step"><div class="adc-step-n">03</div><span>Syncs automatically on sign-in across devices</span></div>
+              <div class="adc-step"><div class="adc-step-n">04</div><span>Deletable anytime from Drive settings</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /arch-diagram -->
+
+    <!-- LEGEND -->
+    <div class="arch-legend reveal">
+      <div class="leg"><div class="leg-line audio"></div>Audio stream (bytes)</div>
+      <div class="leg"><div class="leg-line firebase"></div>Firebase sync data</div>
+      <div class="leg"><div class="leg-line drive"></div>Google Drive / OAuth</div>
+      <div class="leg"><div class="leg-line api"></div>API request / response</div>
+      <div class="leg"><div class="leg-line bi"></div>Bidirectional</div>
+    </div>
+
+  </div><!-- /inner -->
+</div><!-- /architecture -->
 
 <!-- DESIGNER -->
 <section id="designer">
