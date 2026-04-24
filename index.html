@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CloudBeat — Your Music. Your Cloud. Your Way.</title>
+<title>CloudBeat — Your Music, Everywhere</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --orange: #ff6b1a;
-  --amber: #f59e0b;
+  --accent: #ff6b1a;
+  --accent2: #f59e0b;
   --cyan: #06b6d4;
   --green: #22c55e;
   --purple: #a78bfa;
@@ -17,1320 +17,791 @@
   --darker: #040508;
   --surface: #0c0f16;
   --surface2: #121720;
-  --border: rgba(255,255,255,0.07);
-  --border2: rgba(255,255,255,0.13);
+  --surface3: #181f2d;
+  --border: rgba(255,255,255,0.06);
+  --border2: rgba(255,255,255,0.1);
   --text: #c4cdd8;
   --text-dim: #4a5568;
 }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--dark);color:var(--text);font-family:'Syne',sans-serif;overflow-x:hidden;cursor:none;}
+a{text-decoration:none;color:inherit;}
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+/* CURSOR */
+.cursor{position:fixed;width:8px;height:8px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);mix-blend-mode:difference;transition:width .2s,height .2s;}
+.cursor-ring{position:fixed;width:30px;height:30px;border:1.5px solid rgba(255,107,26,.4);border-radius:50%;pointer-events:none;z-index:99998;transform:translate(-50%,-50%);transition:left .08s,top .08s;}
+@media(hover:none){.cursor,.cursor-ring{display:none!important;}body{cursor:auto!important;}}
 
-body {
-  background: var(--dark);
-  color: var(--text);
-  font-family: 'Syne', sans-serif;
-  overflow-x: hidden;
-  cursor: none;
-}
+/* NOISE */
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9998;opacity:.5;}
 
-/* ── CURSOR ── */
-.cursor { position: fixed; width: 10px; height: 10px; background: var(--orange); border-radius: 50%; pointer-events: none; z-index: 99999; transform: translate(-50%,-50%); mix-blend-mode: difference; transition: width .15s, height .15s; }
-.cursor-ring { position: fixed; width: 34px; height: 34px; border: 1.5px solid rgba(255,107,26,.45); border-radius: 50%; pointer-events: none; z-index: 99998; transform: translate(-50%,-50%); transition: none; }
+/* GRID BG */
+.grid-bg{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.018;background-image:repeating-linear-gradient(0deg,transparent,transparent 48px,rgba(255,255,255,.15) 48px,rgba(255,255,255,.15) 49px),repeating-linear-gradient(90deg,transparent,transparent 48px,rgba(255,255,255,.15) 48px,rgba(255,255,255,.15) 49px);}
 
-/* ── NOISE OVERLAY ── */
-body::after { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9000; opacity: .5; }
+/* SCROLLBAR */
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--accent);border-radius:2px;}
 
-/* ── NAV ── */
-nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 500;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 18px 48px;
-  background: rgba(7,9,13,.7);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border);
-}
-.nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 8px; background: linear-gradient(135deg, var(--orange), var(--amber)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; gap: 10px; }
-.nav-dot { width: 7px; height: 7px; background: var(--orange); border-radius: 50%; animation: pulse 2s ease infinite; flex-shrink: 0; }
-@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.6)} }
-.nav-links { display: flex; gap: 32px; }
-.nav-links a { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-dim); text-decoration: none; transition: color .2s; }
-.nav-links a:hover { color: var(--orange); }
-.nav-cta { font-family: 'Bebas Neue', sans-serif; font-size: 15px; letter-spacing: 4px; padding: 9px 24px; background: transparent; border: 1px solid rgba(255,107,26,.5); color: var(--orange); text-decoration: none; transition: all .3s; position: relative; overflow: hidden; }
-.nav-cta::before { content: ''; position: absolute; inset: 0; background: var(--orange); transform: translateX(-101%); transition: transform .3s cubic-bezier(.4,0,.2,1); }
-.nav-cta:hover { color: #000; }
-.nav-cta:hover::before { transform: translateX(0); }
-.nav-cta span { position: relative; z-index: 1; }
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 40px;display:flex;align-items:center;justify-content:space-between;background:rgba(7,9,13,.8);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:6px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.nav-links{display:flex;gap:28px;align-items:center;}
+.nav-links a{font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);transition:color .2s;}
+.nav-links a:hover{color:var(--accent);}
+.nav-cta{padding:8px 20px;background:var(--accent);color:#000;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:3px;border:none;cursor:pointer;transition:all .2s;display:inline-block;}
+.nav-cta:hover{background:var(--accent2);transform:translateY(-1px);}
 
-/* ── HERO ── */
-#hero {
-  min-height: 100vh;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: 120px 48px 80px;
-  position: relative; overflow: hidden;
-  text-align: center;
-}
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:120px 40px 60px;}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 80%,rgba(255,107,26,.12),transparent),radial-gradient(ellipse 50% 40% at 80% 20%,rgba(167,139,250,.07),transparent),radial-gradient(ellipse 60% 50% at 10% 60%,rgba(6,182,212,.05),transparent);animation:heroBg 8s ease-in-out infinite alternate;}
+@keyframes heroBg{0%{opacity:.7}100%{opacity:1}}
+.hero-eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--accent);margin-bottom:20px;display:flex;align-items:center;gap:10px;}
+.hero-eyebrow::before,.hero-eyebrow::after{content:'';width:30px;height:1px;background:var(--accent);}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(80px,14vw,160px);letter-spacing:4px;line-height:.92;text-align:center;background:linear-gradient(135deg,#fff 0%,var(--text) 60%,var(--accent) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;position:relative;z-index:1;}
+.hero-title .orange{-webkit-text-fill-color:var(--accent);}
+.hero-sub{font-size:clamp(14px,2vw,18px);color:var(--text-dim);text-align:center;max-width:580px;line-height:1.7;margin:24px 0 40px;}
+.hero-badges{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:48px;}
+.badge{display:flex;align-items:center;gap:6px;padding:6px 14px;background:rgba(255,255,255,.04);border:1px solid var(--border2);font-size:11px;font-family:'JetBrains Mono',monospace;letter-spacing:1px;color:var(--text-dim);}
+.badge .bd{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;}
+.btn-primary{padding:16px 36px;background:var(--accent);color:#000;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:4px;border:none;cursor:pointer;transition:all .25s;position:relative;overflow:hidden;}
+.btn-primary::before{content:'';position:absolute;inset:0;background:var(--accent2);transform:translateX(-101%);transition:transform .3s cubic-bezier(.4,0,.2,1);}
+.btn-primary:hover{color:#000;}
+.btn-primary:hover::before{transform:translateX(0);}
+.btn-primary span{position:relative;z-index:1;}
+.btn-secondary{padding:16px 36px;background:transparent;color:var(--text);font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:4px;border:1px solid var(--border2);cursor:pointer;transition:all .25s;}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent);}
+.hero-scroll{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--text-dim);}
+.scroll-line{width:1px;height:40px;background:linear-gradient(to bottom,var(--accent),transparent);animation:scrollBob 2s ease-in-out infinite;}
+@keyframes scrollBob{0%,100%{transform:scaleY(1);opacity:.6}50%{transform:scaleY(1.3);opacity:1}}
 
-.hero-grid {
-  position: absolute; inset: 0; pointer-events: none;
-  background-image:
-    repeating-linear-gradient(0deg,transparent,transparent 64px,rgba(255,255,255,.025) 64px,rgba(255,255,255,.025) 65px),
-    repeating-linear-gradient(90deg,transparent,transparent 64px,rgba(255,255,255,.025) 64px,rgba(255,255,255,.025) 65px);
-}
-.hero-glow { position: absolute; width: 900px; height: 900px; border-radius: 50%; background: radial-gradient(circle, rgba(255,107,26,.12) 0%, transparent 70%); top: 50%; left: 50%; transform: translate(-50%,-50%); animation: glowPulse 5s ease-in-out infinite alternate; }
-@keyframes glowPulse { 0%{opacity:.5;transform:translate(-50%,-50%) scale(.9)} 100%{opacity:1;transform:translate(-50%,-50%) scale(1.1)} }
+/* PLAYER PREVIEW */
+.player-preview{background:var(--surface);border:1px solid var(--border2);padding:14px 20px;display:flex;align-items:center;gap:16px;max-width:480px;width:100%;margin:0 auto;position:relative;z-index:1;}
+.pp-art{width:44px;height:44px;border-radius:3px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.pp-info{flex:1;min-width:0;}
+.pp-title{font-size:13px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pp-artist{font-size:11px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;}
+.pp-bar{height:3px;background:var(--surface3);margin-top:8px;border-radius:2px;overflow:hidden;}
+.pp-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;animation:ppPlay 20s linear infinite;}
+@keyframes ppPlay{0%{width:0%}100%{width:100%}}
+.pp-controls{display:flex;gap:10px;align-items:center;}
+.pp-btn{width:28px;height:28px;display:flex;align-items:center;justify-content:center;color:var(--text-dim);cursor:pointer;transition:color .2s;border:none;background:none;}
+.pp-btn:hover{color:var(--accent);}
+.pp-play{width:34px;height:34px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;color:#000;}
+.pp-live{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;color:#ff6b6b;background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.2);padding:3px 8px;display:flex;align-items:center;gap:5px;}
+.pp-live-dot{width:5px;height:5px;background:#ff6b6b;border-radius:50%;animation:blink 1.2s ease infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
 
-.hero-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 5px; text-transform: uppercase; color: var(--orange); margin-bottom: 20px; opacity: 0; animation: fadeUp .8s .2s ease forwards; }
-.hero-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(72px, 12vw, 160px); line-height: .92; letter-spacing: 4px; color: #fff; opacity: 0; animation: fadeUp .8s .4s ease forwards; }
-.hero-title .outline { -webkit-text-stroke: 1px rgba(255,255,255,.25); color: transparent; }
-.hero-title .accent { background: linear-gradient(135deg, var(--orange), var(--amber)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.hero-sub { max-width: 620px; font-size: 16px; color: var(--text-dim); line-height: 1.8; margin: 28px auto 0; opacity: 0; animation: fadeUp .8s .6s ease forwards; }
-.hero-sub strong { color: var(--text); }
-.hero-btns { display: flex; gap: 14px; margin-top: 44px; justify-content: center; opacity: 0; animation: fadeUp .8s .8s ease forwards; }
-.btn-primary { padding: 16px 40px; background: var(--orange); border: none; color: #000; font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 4px; cursor: pointer; text-decoration: none; transition: all .25s; display: inline-block; }
-.btn-primary:hover { background: var(--amber); transform: translateY(-2px); }
-.btn-secondary { padding: 16px 40px; background: transparent; border: 1px solid var(--border2); color: var(--text); font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 4px; cursor: pointer; text-decoration: none; transition: all .25s; display: inline-block; }
-.btn-secondary:hover { border-color: rgba(255,107,26,.5); color: var(--orange); transform: translateY(-2px); }
+/* SECTIONS */
+section{position:relative;z-index:1;}
+.section-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--accent);margin-bottom:16px;}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,6vw,64px);letter-spacing:2px;color:#fff;line-height:1;}
+.section-sub{font-size:14px;color:var(--text-dim);line-height:1.8;max-width:540px;margin-top:14px;}
 
-.hero-tags { display: flex; gap: 10px; margin-top: 40px; justify-content: center; flex-wrap: wrap; opacity: 0; animation: fadeUp .8s 1s ease forwards; }
-.hero-tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 3px; padding: 5px 12px; border: 1px solid var(--border); color: var(--text-dim); text-transform: uppercase; }
+/* GET CLOUDBEAT */
+.get-section{padding:100px 40px;background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden;}
+.get-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;}
+.get-version{font-family:'Bebas Neue',sans-serif;font-size:80px;letter-spacing:2px;color:var(--accent);opacity:.15;position:absolute;right:-10px;top:-20px;pointer-events:none;}
+.get-card{background:var(--surface2);border:1px solid var(--border2);padding:32px;position:relative;overflow:hidden;}
+.get-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));}
+.get-name{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:4px;color:#fff;margin-bottom:6px;}
+.get-tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--accent2);margin-bottom:20px;}
+.get-features{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:28px;}
+.get-features li{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text);}
+.get-features li::before{content:'▸';color:var(--accent);font-size:10px;}
+.get-dl-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;background:var(--accent);color:#000;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:3px;border:none;cursor:pointer;transition:all .2s;width:100%;justify-content:center;}
+.get-dl-btn:hover{background:var(--accent2);}
+.get-note{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--text-dim);margin-top:10px;text-align:center;}
+.pwa-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);color:var(--green);font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;margin-bottom:20px;}
 
-.scroll-hint { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; animation: fadeIn 1s 1.5s ease forwards; }
-.scroll-hint span { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 4px; color: var(--text-dim); text-transform: uppercase; }
-.scroll-arrow { width: 1px; height: 40px; background: linear-gradient(to bottom, var(--orange), transparent); animation: scrollDrop 1.5s ease-in-out infinite; }
-@keyframes scrollDrop { 0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom} }
+/* FEATURES */
+.features-section{padding:100px 40px;}
+.features-grid{max-width:1100px;margin:40px auto 0;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1px;background:var(--border);}
+.feature-card{background:var(--dark);padding:32px;transition:background .2s;position:relative;overflow:hidden;}
+.feature-card:hover{background:var(--surface);}
+.feature-card::after{content:'';position:absolute;top:0;left:0;width:2px;height:0;background:var(--accent);transition:height .3s;}
+.feature-card:hover::after{height:100%;}
+.fc-icon{font-size:28px;margin-bottom:16px;}
+.fc-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:#fff;margin-bottom:8px;}
+.fc-desc{font-size:12px;color:var(--text-dim);line-height:1.8;}
+.fc-tag{display:inline-block;margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;padding:3px 8px;background:rgba(255,107,26,.08);border:1px solid rgba(255,107,26,.2);color:var(--accent);}
 
-@keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:none} }
-@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+/* JAM FLOWCHART */
+.flow-section{padding:100px 40px;background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.flow-inner{max-width:1100px;margin:0 auto;}
+.flow-title-wrap{text-align:center;margin-bottom:60px;}
+#flowchart{width:100%;overflow-x:auto;}
+.fc-wrap{min-width:900px;padding:10px 0;}
 
-/* ── MARQUEE ── */
-.marquee-wrap { overflow: hidden; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--darker); padding: 14px 0; }
-.marquee-track { display: flex; gap: 0; width: max-content; animation: marquee 28s linear infinite; }
-.marquee-item { display: flex; align-items: center; gap: 16px; padding: 0 36px; font-family: 'Bebas Neue', sans-serif; font-size: 15px; letter-spacing: 5px; color: var(--text-dim); white-space: nowrap; }
-.marquee-item .dot { width: 4px; height: 4px; border-radius: 50%; background: var(--orange); flex-shrink: 0; }
-@keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+/* FLOWCHART NODES */
+.fc-canvas{position:relative;width:100%;min-height:700px;}
+.fc-node{position:absolute;padding:12px 18px;border:1px solid;font-size:11px;font-weight:700;font-family:'Syne',sans-serif;text-align:center;cursor:pointer;transition:all .2s;z-index:2;line-height:1.3;}
+.fc-node:hover{transform:scale(1.04);}
+.fc-node.host{background:rgba(255,107,26,.1);border-color:rgba(255,107,26,.5);color:var(--accent);}
+.fc-node.listener{background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.5);color:var(--purple);}
+.fc-node.website{background:rgba(6,182,212,.1);border-color:rgba(6,182,212,.5);color:var(--cyan);}
+.fc-node.github{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.2);color:#fff;}
+.fc-node.drive{background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.3);color:var(--green);}
+.fc-node.firebase{background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.3);color:var(--accent2);}
+.fc-node.action{background:rgba(236,72,153,.08);border-color:rgba(236,72,153,.3);color:var(--pink);}
+.fc-node.code-node{background:rgba(167,139,250,.15);border-color:rgba(167,139,250,.6);color:var(--purple);font-family:'JetBrains Mono',monospace;font-size:20px;letter-spacing:4px;padding:14px 24px;}
+.fc-node-icon{font-size:16px;display:block;margin-bottom:4px;}
+.fc-node-label{font-size:10px;display:block;opacity:.7;margin-top:2px;font-weight:400;font-family:'JetBrains Mono',monospace;letter-spacing:1px;}
 
-/* ── SECTION BASE ── */
-section { padding: 120px 48px; max-width: 1200px; margin: 0 auto; }
-.section-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 5px; text-transform: uppercase; color: var(--orange); margin-bottom: 14px; }
-.section-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(42px, 6vw, 80px); line-height: .95; color: #fff; margin-bottom: 20px; }
-.section-sub { font-size: 15px; color: var(--text-dim); line-height: 1.8; max-width: 560px; }
+/* SVG ARROWS */
+#fc-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;}
+.fc-arrow{fill:none;stroke-width:1.5;marker-end:url(#arr);}
+.fc-label-text{font-family:'JetBrains Mono',monospace;font-size:9px;fill:var(--text-dim);}
 
-/* ── PURPOSE SECTION ── */
-#purpose { position: relative; }
-.purpose-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
-.purpose-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); }
-.purpose-stat { background: var(--surface); padding: 32px 28px; }
-.purpose-stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 52px; letter-spacing: 2px; background: linear-gradient(135deg, var(--orange), var(--amber)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; }
-.purpose-stat-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-dim); margin-top: 6px; }
+/* STEP TOOLTIP */
+.fc-tooltip{display:none;position:fixed;z-index:9999;background:var(--surface2);border:1px solid var(--border2);padding:14px 18px;max-width:260px;box-shadow:0 20px 60px rgba(0,0,0,.8);}
+.fc-tooltip.open{display:block;}
+.fc-tt-title{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:#fff;margin-bottom:6px;}
+.fc-tt-desc{font-size:11px;color:var(--text-dim);line-height:1.7;}
+.fc-tt-step{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--accent);margin-bottom:6px;}
 
-/* ── HOW IT WORKS ── */
-#how { background: var(--surface); position: relative; overflow: hidden; max-width: 100%; }
-#how .inner { max-width: 1200px; margin: 0 auto; padding: 120px 48px; }
-.flow-diagram { margin-top: 70px; position: relative; }
-.flow-nodes { display: flex; align-items: stretch; gap: 0; }
-.flow-node { flex: 1; background: var(--dark); border: 1px solid var(--border); padding: 32px 28px; position: relative; transition: border-color .3s, transform .3s; cursor: default; }
-.flow-node:hover { border-color: rgba(255,107,26,.4); transform: translateY(-4px); }
-.flow-node:not(:last-child)::after { content: ''; position: absolute; right: -1px; top: 50%; width: 2px; height: 40%; transform: translateY(-50%); background: linear-gradient(to bottom, transparent, var(--orange), transparent); z-index: 2; }
-.flow-arrow { width: 48px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; position: relative; }
-.flow-arrow svg { color: var(--orange); animation: arrowPulse 2s ease infinite; }
-@keyframes arrowPulse { 0%,100%{opacity:.3;transform:translateX(-3px)} 50%{opacity:1;transform:translateX(3px)} }
-.flow-icon { font-size: 28px; margin-bottom: 14px; }
-.flow-num { font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: rgba(255,107,26,.12); position: absolute; top: 12px; right: 16px; line-height: 1; }
-.flow-node-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 2px; color: #fff; margin-bottom: 8px; }
-.flow-node-desc { font-size: 12px; color: var(--text-dim); line-height: 1.7; }
-.flow-badge { display: inline-block; margin-top: 12px; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 2px; padding: 3px 8px; border-radius: 2px; text-transform: uppercase; }
-.badge-github { background: rgba(255,255,255,.06); color: var(--text-dim); border: 1px solid var(--border2); }
-.badge-drive { background: rgba(6,182,212,.08); color: var(--cyan); border: 1px solid rgba(6,182,212,.2); }
-.badge-fire { background: rgba(245,158,11,.08); color: var(--amber); border: 1px solid rgba(245,158,11,.2); }
+/* FLOW LEGEND */
+.flow-legend{display:flex;gap:20px;flex-wrap:wrap;margin-top:30px;padding:20px;background:var(--surface2);border:1px solid var(--border);}
+.fl-item{display:flex;align-items:center;gap:8px;font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--text-dim);}
+.fl-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
 
-/* ── INTEGRATIONS ── */
-#integrations { position: relative; }
-.integrations-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: var(--border); border: 1px solid var(--border); margin-top: 60px; }
-.int-card { background: var(--dark); padding: 44px 36px; position: relative; overflow: hidden; transition: background .3s; }
-.int-card:hover { background: var(--surface); }
-.int-card::before { content: ''; position: absolute; inset: 0; opacity: 0; transition: opacity .4s; }
-.int-card.github::before { background: radial-gradient(ellipse at top left, rgba(255,255,255,.04), transparent 70%); }
-.int-card.drive::before { background: radial-gradient(ellipse at top left, rgba(6,182,212,.06), transparent 70%); }
-.int-card.firebase::before { background: radial-gradient(ellipse at top left, rgba(245,158,11,.06), transparent 70%); }
-.int-card:hover::before { opacity: 1; }
-.int-logo { font-size: 40px; margin-bottom: 20px; display: block; }
-.int-name { font-family: 'Bebas Neue', sans-serif; font-size: 30px; letter-spacing: 4px; margin-bottom: 10px; }
-.int-card.github .int-name { color: #fff; }
-.int-card.drive .int-name { color: var(--cyan); }
-.int-card.firebase .int-name { color: var(--amber); }
-.int-desc { font-size: 13px; color: var(--text-dim); line-height: 1.8; }
-.int-flow { margin-top: 22px; display: flex; flex-direction: column; gap: 8px; }
-.int-step { display: flex; align-items: flex-start; gap: 10px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); line-height: 1.5; }
-.int-step-num { font-size: 9px; background: var(--surface2); border: 1px solid var(--border); padding: 2px 6px; flex-shrink: 0; color: var(--text-dim); }
-.int-card-tag { position: absolute; top: 20px; right: 20px; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 2px; padding: 3px 8px; border: 1px solid var(--border); color: var(--text-dim); text-transform: uppercase; }
+/* HOW IT WORKS */
+.hiw-section{padding:100px 40px;}
+.hiw-inner{max-width:1100px;margin:0 auto;}
+.hiw-steps{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:24px;margin-top:40px;}
+.hiw-step{padding:28px;background:var(--surface);border:1px solid var(--border);position:relative;}
+.hiw-num{font-family:'Bebas Neue',sans-serif;font-size:64px;color:var(--accent);opacity:.12;position:absolute;top:8px;right:16px;line-height:1;}
+.hiw-step-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:#fff;margin-bottom:8px;}
+.hiw-step-desc{font-size:12px;color:var(--text-dim);line-height:1.8;}
 
-/* data flow animation */
-.data-path { margin-top: 30px; height: 36px; position: relative; overflow: hidden; border: 1px solid var(--border); background: var(--surface2); }
-.data-path-label { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 2px; color: var(--text-dim); text-transform: uppercase; z-index: 2; }
-.data-packet { position: absolute; top: 50%; height: 2px; transform: translateY(-50%); border-radius: 2px; animation: packetFlow 3s linear infinite; }
-.github .data-packet { background: linear-gradient(to right, transparent, rgba(255,255,255,.6), transparent); width: 80px; left: -80px; }
-.drive .data-packet { background: linear-gradient(to right, transparent, rgba(6,182,212,.8), transparent); width: 80px; left: -80px; animation-delay: .8s; }
-.firebase .data-packet { background: linear-gradient(to right, transparent, rgba(245,158,11,.8), transparent); width: 80px; left: -80px; animation-delay: 1.6s; }
-@keyframes packetFlow { from{left:-80px} to{left:100%} }
+/* DISCLAIMER */
+.disclaimer-section{padding:80px 40px;border-top:1px solid var(--border);}
+.disclaimer-inner{max-width:900px;margin:0 auto;}
+.disc-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:40px;}
+.disc-tab{padding:12px 24px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--text-dim);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;}
+.disc-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.disc-panel{display:none;animation:fadeIn .2s ease;}
+.disc-panel.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.disc-card{background:var(--surface);border:1px solid var(--border2);padding:28px 32px;}
+.disc-card h3{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;color:#fff;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+.disc-card p{font-size:13px;color:var(--text);line-height:1.9;margin-bottom:14px;}
+.disc-card p:last-child{margin-bottom:0;}
+.disc-highlight{padding:16px 20px;background:rgba(255,107,26,.06);border-left:3px solid var(--accent);margin:16px 0;font-size:13px;color:var(--text);line-height:1.8;}
+.disc-warn{padding:16px 20px;background:rgba(245,158,11,.06);border-left:3px solid var(--accent2);margin:16px 0;font-size:13px;color:var(--text);line-height:1.8;}
 
-/* ── FEATURES ── */
-#features { position: relative; }
-.features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: var(--border); border: 1px solid var(--border); margin-top: 60px; }
-.feat-card { background: var(--dark); padding: 32px 28px; position: relative; overflow: hidden; transition: background .3s; }
-.feat-card:hover { background: var(--surface); }
-.feat-icon-wrap { width: 44px; height: 44px; border: 1px solid var(--border2); display: flex; align-items: center; justify-content: center; margin-bottom: 18px; font-size: 18px; position: relative; }
-.feat-icon-wrap::after { content: ''; position: absolute; inset: 3px; border: 1px solid var(--border); }
-.feat-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; color: #fff; margin-bottom: 8px; }
-.feat-desc { font-size: 12px; color: var(--text-dim); line-height: 1.7; }
-.feat-tag { margin-top: 14px; display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 2px; color: var(--orange); border: 1px solid rgba(255,107,26,.2); padding: 2px 8px; text-transform: uppercase; }
+/* TECH STACK */
+.tech-section{padding:80px 40px;background:var(--surface);border-top:1px solid var(--border);}
+.tech-inner{max-width:1100px;margin:0 auto;}
+.tech-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-top:36px;}
+.tech-card{padding:20px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;gap:12px;transition:border-color .2s;}
+.tech-card:hover{border-color:rgba(255,107,26,.3);}
+.tc-icon{font-size:22px;flex-shrink:0;}
+.tc-name{font-size:13px;font-weight:700;color:#fff;}
+.tc-role{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--text-dim);margin-top:2px;}
 
-/* ── WAVEFORM VISUAL ── */
-#now-playing-visual { background: var(--darker); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); overflow: hidden; }
-#now-playing-visual .inner { max-width: 1200px; margin: 0 auto; padding: 80px 48px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
-.player-mockup { background: var(--surface); border: 1px solid var(--border); padding: 24px; position: relative; }
-.pm-topbar { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
-.pm-dots { display: flex; gap: 5px; }
-.pm-dot { width: 8px; height: 8px; border-radius: 50%; }
-.pm-dot:nth-child(1) { background: #ff5f57; }
-.pm-dot:nth-child(2) { background: #febc2e; }
-.pm-dot:nth-child(3) { background: #28c840; }
-.pm-title { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 2px; color: var(--text-dim); margin-left: auto; }
-.pm-art { width: 100%; aspect-ratio: 1; background: linear-gradient(135deg, var(--orange), var(--amber), #c41e3a); display: flex; align-items: center; justify-content: center; font-size: 48px; margin-bottom: 16px; position: relative; overflow: hidden; }
-.pm-art-disc { width: 80px; height: 80px; background: rgba(0,0,0,.5); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; border: 3px solid rgba(255,255,255,.15); animation: spinDisc 6s linear infinite; }
-@keyframes spinDisc { from{transform:rotate(0)} to{transform:rotate(360deg)} }
-.pm-song { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 2px; color: #fff; }
-.pm-artist { font-size: 11px; color: var(--text-dim); margin-top: 3px; font-family: 'JetBrains Mono', monospace; }
-.pm-bar { margin-top: 16px; height: 3px; background: var(--surface2); border-radius: 2px; position: relative; }
-.pm-bar-fill { height: 100%; background: linear-gradient(to right, var(--orange), var(--amber)); border-radius: 2px; width: 38%; }
-.pm-times { display: flex; justify-content: space-between; margin-top: 6px; font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-dim); }
-.pm-controls { display: flex; align-items: center; justify-content: center; gap: 20px; margin-top: 16px; }
-.pm-btn { width: 36px; height: 36px; border: 1px solid var(--border); background: none; display: flex; align-items: center; justify-content: center; color: var(--text-dim); font-size: 14px; cursor: default; }
-.pm-btn.main { width: 48px; height: 48px; background: #fff; border-color: transparent; color: #000; }
-.waveform { display: flex; align-items: flex-end; gap: 3px; height: 60px; padding: 0 4px; }
-.wbar { background: var(--surface2); width: 4px; border-radius: 2px; animation: waveAnim var(--d, 1s) ease-in-out infinite alternate; }
-.wbar.active { background: linear-gradient(to top, var(--orange), var(--amber)); }
-@keyframes waveAnim { from{height:var(--min,8px)} to{height:var(--max,40px)} }
+/* FOOTER */
+footer{padding:60px 40px 30px;border-top:1px solid var(--border);}
+.footer-inner{max-width:1100px;margin:0 auto;}
+.footer-logo{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:6px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;}
+.footer-tagline{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--text-dim);}
+.footer-bottom{margin-top:48px;padding-top:20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:gap;gap:16px;}
+.footer-copy{font-size:11px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;}
 
-/* ── DESIGNER ── */
-#designer { position: relative; }
-.designer-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
-.designer-badge { display: inline-flex; align-items: center; gap: 10px; padding: 12px 20px; border: 1px solid var(--border2); background: var(--surface); margin-bottom: 24px; }
-.designer-badge-icon { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--orange), var(--amber)); display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 16px; color: #000; flex-shrink: 0; }
-.designer-badge-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 2px; color: var(--text-dim); }
-.designer-badge-name { font-size: 12px; font-weight: 700; color: var(--text); }
-.designer-quote { font-size: 22px; font-weight: 700; color: #fff; line-height: 1.4; margin-bottom: 20px; }
-.designer-quote em { font-style: normal; color: var(--orange); }
-.designer-cards { display: flex; flex-direction: column; gap: 12px; }
-.designer-card { border: 1px solid var(--border); padding: 20px; background: var(--surface); display: flex; gap: 14px; align-items: flex-start; transition: border-color .3s; }
-.designer-card:hover { border-color: rgba(255,107,26,.3); }
-.designer-card-icon { font-size: 20px; flex-shrink: 0; }
-.designer-card-title { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 2px; color: var(--orange); text-transform: uppercase; margin-bottom: 4px; }
-.designer-card-text { font-size: 12px; color: var(--text-dim); line-height: 1.6; }
+/* ANIMATIONS */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease;}
+.reveal.visible{opacity:1;transform:none;}
 
-/* ── DISCLAIMER ── */
-#disclaimer { background: var(--surface); max-width: 100%; position: relative; }
-#disclaimer::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(to right, transparent, var(--orange), transparent); }
-#disclaimer .inner { max-width: 1200px; margin: 0 auto; padding: 100px 48px; }
-.disclaimer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--border); margin-top: 50px; }
-.disc-card { background: var(--dark); padding: 36px 32px; }
-.disc-card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
-.disc-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.disc-dot.orange { background: var(--orange); box-shadow: 0 0 10px var(--orange); }
-.disc-dot.cyan { background: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
-.disc-dot.green { background: var(--green); box-shadow: 0 0 10px var(--green); }
-.disc-dot.amber { background: var(--amber); box-shadow: 0 0 10px var(--amber); }
-.disc-card-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 3px; color: #fff; }
-.disc-card-text { font-size: 12px; color: var(--text-dim); line-height: 1.8; }
-.disc-card-text strong { color: var(--text); }
-.disc-highlight { margin-top: 16px; padding: 12px 16px; border-left: 2px solid var(--orange); background: rgba(255,107,26,.05); font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); line-height: 1.7; }
-
-/* ── FOOTER ── */
-footer { border-top: 1px solid var(--border); padding: 50px 48px; max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
-.footer-logo { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 6px; background: linear-gradient(135deg, var(--orange), var(--amber)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.footer-center { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 2px; color: var(--text-dim); text-align: center; line-height: 1.8; }
-.footer-center a { color: var(--orange); text-decoration: none; }
-.footer-right { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 2px; color: var(--text-dim); text-align: right; }
-
-/* ── SCROLL REVEAL ── */
-.reveal { opacity: 0; transform: translateY(30px); transition: opacity .7s ease, transform .7s ease; }
-.reveal.visible { opacity: 1; transform: none; }
-
-/* ══════════════════════════════════════════
-   ARCHITECTURE / FLOWCHART SECTION
-══════════════════════════════════════════ */
-#architecture { background: var(--darker); max-width: 100%; position: relative; overflow: hidden; }
-#architecture::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(to right, transparent, var(--purple), transparent); }
-#architecture .inner { max-width: 1280px; margin: 0 auto; padding: 120px 48px 100px; }
-
-/* — Tab switcher — */
-.arch-tabs { display: flex; gap: 0; border: 1px solid var(--border); margin-top: 50px; overflow: hidden; }
-.arch-tab { flex: 1; padding: 14px 20px; background: none; border: none; border-right: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-dim); cursor: pointer; transition: all .2s; }
-.arch-tab:last-child { border-right: none; }
-.arch-tab.active { background: rgba(255,107,26,.08); color: var(--orange); }
-.arch-tab:hover:not(.active) { background: rgba(255,255,255,.03); color: var(--text); }
-
-/* — Diagram canvas — */
-.arch-diagram { margin-top: 0; padding: 48px; background: var(--surface); border: 1px solid var(--border); border-top: none; position: relative; overflow: hidden; }
-.arch-panel { display: none; }
-.arch-panel.active { display: block; }
-.arch-canvas { position: relative; width: 100%; }
-
-/* — SVG diagram base — */
-.arch-svg { width: 100%; display: block; }
-
-/* — Animated data packets on SVG paths — */
-@keyframes dashFlow { to { stroke-dashoffset: -40; } }
-@keyframes dashFlowRev { to { stroke-dashoffset: 40; } }
-.flow-line-anim { animation: dashFlow 1.8s linear infinite; }
-.flow-line-anim-rev { animation: dashFlowRev 1.8s linear infinite; }
-.flow-line-slow { animation: dashFlow 3s linear infinite; }
-.flow-line-fast { animation: dashFlow 1s linear infinite; }
-
-/* — Packet dot animation along paths — */
-.packet { animation: packetMove var(--dur, 2s) linear infinite var(--delay, 0s); }
-@keyframes packetMove { 0%{ offset-distance:0%; opacity:0; } 5%{ opacity:1; } 90%{ opacity:1; } 100%{ offset-distance:100%; opacity:0; } }
-
-/* — Detail cards below diagram — */
-.arch-detail-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; background: var(--border); margin-top: 2px; }
-.arch-detail-card { background: var(--dark); padding: 24px 22px; cursor: pointer; transition: background .2s; border-top: 2px solid transparent; }
-.arch-detail-card:hover { background: var(--surface2); }
-.arch-detail-card.active { background: var(--surface2); border-top-color: var(--orange); }
-.adc-icon { font-size: 20px; margin-bottom: 10px; }
-.adc-title { font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 2px; color: #fff; margin-bottom: 6px; }
-.adc-body { font-size: 11px; color: var(--text-dim); line-height: 1.7; }
-.adc-steps { margin-top: 10px; display: flex; flex-direction: column; gap: 5px; }
-.adc-step { display: flex; gap: 8px; font-size: 10px; font-family: 'JetBrains Mono', monospace; color: var(--text-dim); line-height: 1.5; }
-.adc-step-n { background: var(--surface); border: 1px solid var(--border); padding: 1px 5px; font-size: 9px; flex-shrink: 0; color: var(--orange); }
-
-/* — Legend row — */
-.arch-legend { display: flex; flex-wrap: wrap; gap: 6px 24px; margin-top: 22px; }
-.leg { display: flex; align-items: center; gap: 7px; font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); }
-.leg-line { width: 28px; height: 2px; flex-shrink: 0; }
-.leg-line.audio { background: var(--orange); }
-.leg-line.firebase { background: var(--amber); border-top: 1px dashed var(--amber); background: none; border-bottom: none; height: 0; border-top: 2px dashed var(--amber); }
-.leg-line.drive { background: var(--cyan); }
-.leg-line.api { background: var(--purple); border-top: 1px dotted var(--purple); background: none; height: 0; border-top: 2px dotted var(--purple); }
-.leg-line.bi { background: none; height: 0; border-top: 2px solid var(--green); }
-
-/* — Node callout tooltip — */
-.node-tooltip { position: absolute; background: var(--surface); border: 1px solid rgba(255,107,26,.4); padding: 12px 16px; font-size: 11px; color: var(--text); max-width: 220px; pointer-events: none; z-index: 10; opacity: 0; transition: opacity .2s; }
-.node-tooltip.visible { opacity: 1; }
-.node-tooltip-title { font-family: 'Bebas Neue', sans-serif; font-size: 15px; letter-spacing: 2px; color: var(--orange); margin-bottom: 4px; }
-
-/* — Jam session specific — */
-.jam-code-badge { display: inline-block; font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 8px; padding: 6px 20px; border: 1px solid rgba(245,158,11,.5); color: var(--amber); background: rgba(245,158,11,.06); }
-
-/* ── RESPONSIVE ── */
-@media(max-width:900px){
-  nav{padding:16px 24px;}
+/* RESPONSIVE */
+@media(max-width:768px){
+  nav{padding:14px 20px;}
   .nav-links{display:none;}
-  section{padding:80px 24px;}
-  .purpose-inner,.designer-inner,.integrations-grid,.features-grid,.disclaimer-grid{grid-template-columns:1fr;}
-  .flow-nodes{flex-direction:column;}
-  .flow-node:not(:last-child)::after{display:none;}
-  .flow-arrow{transform:rotate(90deg);}
-  #now-playing-visual .inner{grid-template-columns:1fr;gap:40px;}
-  footer{flex-direction:column;text-align:center;padding:40px 24px;}
-  .footer-right{text-align:center;}
-  .hero-btns{flex-direction:column;align-items:center;}
+  .hero{padding:100px 20px 60px;}
+  .get-inner{grid-template-columns:1fr;}
+  .features-grid{grid-template-columns:1fr;}
+  .flow-section,.features-section,.get-section,.hiw-section,.disclaimer-section,.tech-section{padding:60px 20px;}
+  footer{padding:40px 20px 20px;}
 }
 </style>
 </head>
 <body>
 
-<!-- CURSOR -->
 <div class="cursor" id="cursor"></div>
 <div class="cursor-ring" id="cursor-ring"></div>
+<div class="grid-bg"></div>
 
 <!-- NAV -->
 <nav>
-  <div class="nav-logo">
-    <div class="nav-dot"></div>
-    CloudBeat
-  </div>
+  <div class="nav-logo">CLOUDBEAT</div>
   <div class="nav-links">
-    <a href="#how">How It Works</a>
-    <a href="#architecture">Architecture</a>
-    <a href="#integrations">Integrations</a>
     <a href="#features">Features</a>
+    <a href="#how">How It Works</a>
+    <a href="#flowchart">Jam Flow</a>
     <a href="#disclaimer">Disclaimer</a>
+    <a href="#get" class="nav-cta">Get v1</a>
   </div>
-  <a href="#" class="nav-cta"><span>Launch App</span></a>
 </nav>
 
 <!-- HERO -->
-<section id="hero">
-  <div class="hero-grid"></div>
-  <div class="hero-glow"></div>
-  <div class="hero-eyebrow">// Personal Music. Zero Cost. Zero Compromise.</div>
-  <h1 class="hero-title">
-    <span class="outline">YOUR</span><br>
-    <span class="accent">MUSIC.</span><br>
-    <span class="outline">YOUR</span><br>CLOUD.
-  </h1>
-  <p class="hero-sub">
-    CloudBeat is a <strong>free, open, non-commercial</strong> music player that streams audio you own — from your GitHub repositories, your Google Drive, or your local files. No subscriptions. No algorithms. <strong>Just your music, beautifully played.</strong>
-  </p>
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-eyebrow">Open Source Music Player</div>
+  <h1 class="hero-title">CLOUD<span class="orange">BEAT</span></h1>
+  <p class="hero-sub">Stream your music from GitHub repos &amp; Google Drive. Host live Jam Sessions with friends. Built for the web — no install needed.</p>
+
+  <div class="hero-badges">
+    <div class="badge"><div class="bd" style="background:var(--accent)"></div>GitHub Repos</div>
+    <div class="badge"><div class="bd" style="background:var(--green)"></div>Google Drive</div>
+    <div class="badge"><div class="bd" style="background:var(--purple)"></div>Jam Sessions</div>
+    <div class="badge"><div class="bd" style="background:var(--cyan)"></div>EQ + Visualizer</div>
+    <div class="badge"><div class="bd" style="background:var(--accent2)"></div>PWA Installable</div>
+    <div class="badge"><div class="bd" style="background:var(--pink)"></div>No Server Needed</div>
+  </div>
+
+  <!-- Mini Player Preview -->
+  <div class="player-preview" style="margin-bottom:40px;">
+    <div class="pp-art">🎵</div>
+    <div class="pp-info" style="flex:1">
+      <div class="pp-title">Now Playing in CloudBeat</div>
+      <div class="pp-artist">// streaming from github</div>
+      <div class="pp-bar"><div class="pp-fill"></div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+      <div class="pp-live"><div class="pp-live-dot"></div>JAM LIVE</div>
+      <div class="pp-controls">
+        <button class="pp-btn">⏮</button>
+        <button class="pp-play">▶</button>
+        <button class="pp-btn">⏭</button>
+      </div>
+    </div>
+  </div>
+
   <div class="hero-btns">
-    <a href="#" class="btn-primary">Launch CloudBeat</a>
-    <a href="#how" class="btn-secondary">See How It Works</a>
+    <a href="#get" class="btn-primary"><span>▼ Get CloudBeat v1</span></a>
+    <a href="#flowchart" class="btn-secondary">See How It Works</a>
   </div>
-  <div class="hero-tags">
-    <div class="hero-tag">100% Free</div>
-    <div class="hero-tag">Zero Ads</div>
-    <div class="hero-tag">No Revenue</div>
-    <div class="hero-tag">GitHub Streaming</div>
-    <div class="hero-tag">Google Drive</div>
-    <div class="hero-tag">Jam Sessions</div>
-    <div class="hero-tag">10-Band EQ</div>
-    <div class="hero-tag">Made in India 🇮🇳</div>
-  </div>
-  <div class="scroll-hint">
-    <span>Scroll</span>
-    <div class="scroll-arrow"></div>
+
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span>SCROLL</span>
   </div>
 </section>
 
-<!-- MARQUEE -->
-<div class="marquee-wrap">
-  <div class="marquee-track">
-    <div class="marquee-item"><div class="dot"></div>Stream from GitHub</div>
-    <div class="marquee-item"><div class="dot"></div>Google Drive Sync</div>
-    <div class="marquee-item"><div class="dot"></div>10-Band Equalizer</div>
-    <div class="marquee-item"><div class="dot"></div>Real-Time Jam Sessions</div>
-    <div class="marquee-item"><div class="dot"></div>Zero Revenue</div>
-    <div class="marquee-item"><div class="dot"></div>No Ads Ever</div>
-    <div class="marquee-item"><div class="dot"></div>Support Original Artists</div>
-    <div class="marquee-item"><div class="dot"></div>Designed by Aayan Singh</div>
-    <div class="marquee-item"><div class="dot"></div>Stream from GitHub</div>
-    <div class="marquee-item"><div class="dot"></div>Google Drive Sync</div>
-    <div class="marquee-item"><div class="dot"></div>10-Band Equalizer</div>
-    <div class="marquee-item"><div class="dot"></div>Real-Time Jam Sessions</div>
-    <div class="marquee-item"><div class="dot"></div>Zero Revenue</div>
-    <div class="marquee-item"><div class="dot"></div>No Ads Ever</div>
-    <div class="marquee-item"><div class="dot"></div>Support Original Artists</div>
-    <div class="marquee-item"><div class="dot"></div>Designed by Aayan Singh</div>
-  </div>
-</div>
-
-<!-- PURPOSE -->
-<section id="purpose">
-  <div class="purpose-inner reveal">
-    <div>
-      <div class="section-label">// The Core Idea</div>
-      <h2 class="section-title">One Simple<br>Freedom</h2>
-      <p class="section-sub">
-        Every person in the world who has an audio file they own — a recording, a riff, a demo, a mixtape — deserves a beautiful way to listen to it, for free, from anywhere on earth.
-      </p>
-      <p class="section-sub" style="margin-top:16px;">
-        CloudBeat exists for that one purpose. Not to replace Spotify. Not to profit. Just to let <strong style="color:var(--text);">you play your audio, beautifully.</strong>
-      </p>
+<!-- GET CLOUDBEAT -->
+<section class="get-section" id="get">
+  <div class="get-inner">
+    <div class="reveal">
+      <div class="section-label">Download</div>
+      <h2 class="section-title">GET CLOUDBEAT V1</h2>
+      <p class="section-sub">CloudBeat is a single HTML file — no server, no backend, no installation required. Just open in any modern browser.</p>
+      <div style="margin-top:30px;display:flex;flex-direction:column;gap:12px;">
+        <div style="display:flex;align-items:center;gap:12px;font-size:13px;color:var(--text);"><span style="color:var(--accent);font-size:18px;">◉</span> Single HTML file — runs anywhere</div>
+        <div style="display:flex;align-items:center;gap:12px;font-size:13px;color:var(--text);"><span style="color:var(--green);font-size:18px;">◉</span> PWA installable on mobile & desktop</div>
+        <div style="display:flex;align-items:center;gap:12px;font-size:13px;color:var(--text);"><span style="color:var(--cyan);font-size:18px;">◉</span> Works offline after first load</div>
+        <div style="display:flex;align-items:center;gap:12px;font-size:13px;color:var(--text);"><span style="color:var(--purple);font-size:18px;">◉</span> No account required — Guest mode available</div>
+      </div>
     </div>
-    <div class="purpose-stat-grid">
-      <div class="purpose-stat">
-        <div class="purpose-stat-num">∞</div>
-        <div class="purpose-stat-label">Audio files supported</div>
+    <div class="reveal">
+      <div class="get-card">
+        <div class="pwa-badge">● PWA READY</div>
+        <div class="get-name">CLOUDBEAT</div>
+        <div class="get-tag">VERSION 1.0 · STABLE RELEASE</div>
+        <ul class="get-features">
+          <li>GitHub Repo Streaming</li>
+          <li>Google Drive Integration</li>
+          <li>Firebase Jam Sessions</li>
+          <li>10-Band EQ + Presets</li>
+          <li>Audio Visualizer</li>
+          <li>Custom Playlists & Liked Songs</li>
+          <li>Listen Stats & History</li>
+          <li>Import / Export JSON backup</li>
+          <li>Custom Hotkeys</li>
+          <li>Themes & Color Customization</li>
+        </ul>
+        <a href="index.html" download="cloudbeat-v1.html" class="get-dl-btn">⬇ Download index.html</a>
+        <div class="get-note">Free forever · Non-commercial · Open source</div>
       </div>
-      <div class="purpose-stat">
-        <div class="purpose-stat-num">₹0</div>
-        <div class="purpose-stat-label">Cost to use, forever</div>
-      </div>
-      <div class="purpose-stat">
-        <div class="purpose-stat-num">0</div>
-        <div class="purpose-stat-label">Ads. Zero. None. Ever.</div>
-      </div>
-      <div class="purpose-stat">
-        <div class="purpose-stat-num">🌍</div>
-        <div class="purpose-stat-label">Works for anyone, anywhere</div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section" id="features">
+  <div style="max-width:1100px;margin:0 auto;" class="reveal">
+    <div class="section-label">Capabilities</div>
+    <h2 class="section-title">EVERYTHING YOU NEED</h2>
+  </div>
+  <div class="features-grid reveal">
+    <div class="feature-card">
+      <div class="fc-icon">🐙</div>
+      <div class="fc-title">GITHUB STREAMING</div>
+      <p class="fc-desc">Connect any public or private GitHub repository as your music source. CloudBeat scans repos for audio files and streams them directly via GitHub's raw CDN.</p>
+      <span class="fc-tag">github api</span>
+    </div>
+    <div class="feature-card">
+      <div class="fc-icon">☁️</div>
+      <div class="fc-title">GOOGLE DRIVE</div>
+      <p class="fc-desc">Sign in with Google and stream audio and video files from your Drive. Full folder navigation with lazy-loading. Supports MP3, FLAC, WAV, M4A, and video formats.</p>
+      <span class="fc-tag">drive v3 api</span>
+    </div>
+    <div class="feature-card">
+      <div class="fc-icon">🎧</div>
+      <div class="fc-title">JAM SESSIONS</div>
+      <p class="fc-desc">Host a live listening room. Share a 6-character code with friends. Everyone hears the same track in sync. Host can grant listeners control to DJ the session.</p>
+      <span class="fc-tag">firebase realtime</span>
+    </div>
+    <div class="feature-card">
+      <div class="fc-icon">🎛️</div>
+      <div class="fc-title">10-BAND EQ</div>
+      <p class="fc-desc">Full 10-band parametric equalizer powered by the Web Audio API. Includes preset profiles: Bass Boost, Rock, Jazz, Acoustic, Pop, and more. Saves per session.</p>
+      <span class="fc-tag">web audio api</span>
+    </div>
+    <div class="feature-card">
+      <div class="fc-icon">📊</div>
+      <div class="fc-title">AUDIO VISUALIZER</div>
+      <p class="fc-desc">Real-time frequency visualizer rendered on canvas. Multiple visualization styles that react to your music in fullscreen Now Playing view.</p>
+      <span class="fc-tag">canvas api</span>
+    </div>
+    <div class="feature-card">
+      <div class="fc-icon">🎨</div>
+      <div class="fc-title">FULL THEMING</div>
+      <p class="fc-desc">Choose your accent color, customize individual UI colors, and personalize the entire look. Themes are saved and synced across sessions via Google Drive or localStorage.</p>
+      <span class="fc-tag">css variables</span>
+    </div>
+    <div class="feature-card">
+      <div class="fc-icon">💾</div>
+      <div class="fc-title">CLOUD SYNC</div>
+      <p class="fc-desc">Google users get automatic sync to a JSON file in their Drive. Playlists, liked songs, EQ settings, stats — everything persists and roams across devices.</p>
+      <span class="fc-tag">google drive api</span>
+    </div>
+    <div class="feature-card">
+      <div class="fc-icon">📋</div>
+      <div class="fc-title">PLAYLISTS & QUEUE</div>
+      <p class="fc-desc">Create unlimited playlists with custom artwork. Drag-to-reorder queue, play next, shuffle, repeat one/all. Repo-linked playlists auto-refresh from GitHub.</p>
+      <span class="fc-tag">local state</span>
+    </div>
+    <div class="feature-card">
+      <div class="fc-icon">📈</div>
+      <div class="fc-title">LISTEN STATS</div>
+      <p class="fc-desc">Track how many times you've played each song. Visual stats per track with source info. Reset anytime. Included in your JSON export backup.</p>
+      <span class="fc-tag">local storage</span>
+    </div>
+    <div class="feature-card">
+      <div class="fc-icon">⌨️</div>
+      <div class="fc-title">CUSTOM HOTKEYS</div>
+      <p class="fc-desc">Fully remappable keyboard shortcuts for play/pause, like, next, prev, repeat, fullscreen, queue. Works on desktop and mobile (hardware media keys supported too).</p>
+      <span class="fc-tag">media session api</span>
+    </div>
+    <div class="feature-card">
+      <div class="fc-icon">📱</div>
+      <div class="fc-title">PWA & MOBILE</div>
+      <p class="fc-desc">Install as a PWA on Android and iOS. Fully responsive layout with bottom tab navigation on mobile. Service Worker for offline caching. Lock screen controls.</p>
+      <span class="fc-tag">service worker</span>
+    </div>
+    <div class="feature-card">
+      <div class="fc-icon">🔐</div>
+      <div class="fc-title">GUEST MODE</div>
+      <p class="fc-desc">No account? No problem. Enter a name and jump straight in. Everything saves to localStorage. Switch to Google later and import your local data to Drive.</p>
+      <span class="fc-tag">local session</span>
+    </div>
+  </div>
+</section>
+
+<!-- FLOWCHART -->
+<section class="flow-section" id="flowchart">
+  <div class="flow-inner">
+    <div class="flow-title-wrap reveal">
+      <div class="section-label">System Architecture</div>
+      <h2 class="section-title">HOW CLOUDBEAT WORKS</h2>
+      <p class="section-sub" style="margin:14px auto 0;text-align:center;">Interactive diagram — click any node to learn more about each component</p>
+    </div>
+
+    <div id="flowchart" class="reveal">
+      <div class="fc-wrap">
+        <div class="fc-canvas" id="fc-canvas" style="height:780px;">
+
+          <svg id="fc-svg" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L8,3 z" fill="rgba(255,255,255,0.2)"/>
+              </marker>
+              <marker id="arr-orange" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L8,3 z" fill="#ff6b1a"/>
+              </marker>
+              <marker id="arr-purple" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L8,3 z" fill="#a78bfa"/>
+              </marker>
+              <marker id="arr-green" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L8,3 z" fill="#22c55e"/>
+              </marker>
+              <marker id="arr-yellow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L8,3 z" fill="#f59e0b"/>
+              </marker>
+              <marker id="arr-cyan" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L8,3 z" fill="#06b6d4"/>
+              </marker>
+            </defs>
+            <!-- Arrows drawn by JS -->
+          </svg>
+
+          <!-- ROW 1: Users -->
+          <div class="fc-node host" id="n-host" style="left:80px;top:40px;width:160px;"
+            data-title="Host (User 1)" data-step="Step 1"
+            data-desc="The Host is the DJ of the Jam Session. They authenticate with Google or join as a Guest, connect their GitHub repo or Google Drive as music source, and start a Jam room.">
+            <span class="fc-node-icon">🎤</span>
+            Host / DJ
+            <span class="fc-node-label">User 1</span>
+          </div>
+
+          <div class="fc-node listener" id="n-listener" style="right:80px;top:40px;width:160px;"
+            data-title="Listener (User 2+)" data-step="Step 2"
+            data-desc="Listeners join a Jam by entering the 6-character code. They connect to the same Firebase room and receive real-time playback state — track, position, and pause status synced from the host.">
+            <span class="fc-node-icon">🎧</span>
+            Listener
+            <span class="fc-node-label">User 2 / 3 / ...</span>
+          </div>
+
+          <!-- ROW 2: CloudBeat App -->
+          <div class="fc-node website" id="n-app" style="left:50%;top:180px;transform:translateX(-50%);width:200px;"
+            data-title="CloudBeat App" data-step="Core"
+            data-desc="CloudBeat runs entirely in the browser as a single HTML file. It manages audio playback using the HTML5 Audio API, handles Google OAuth via GAPI, connects to Firebase for Jam sessions, and fetches music from GitHub or Google Drive.">
+            <span class="fc-node-icon">🎵</span>
+            CloudBeat App
+            <span class="fc-node-label">Single HTML File · Browser</span>
+          </div>
+
+          <!-- JAM CODE NODE -->
+          <div class="fc-node code-node" id="n-jamcode" style="left:50%;top:330px;transform:translateX(-50%);width:160px;"
+            data-title="Jam Room Code" data-step="Step 3"
+            data-desc="When Host clicks 'Host Jam', CloudBeat generates a random 6-char alphanumeric code (e.g. A3K7PZ) using Math.random(). This code becomes the Firebase database path: rooms/A3K7PZ. The host sees it instantly in the Jam Bar at the top. Listeners enter this code to join.">
+            A3K7PZ
+            <span class="fc-node-label">6-char jam code</span>
+          </div>
+
+          <!-- ROW 3: Services -->
+          <div class="fc-node firebase" id="n-firebase-db" style="left:50%;top:470px;transform:translateX(-50%);width:200px;"
+            data-title="Firebase Realtime DB" data-step="Step 4"
+            data-desc="The Jam room lives at rooms/{code} in Firebase. The host writes playback state every 2 seconds: current track name, seek position, play/pause status, timestamp. All listeners have onValue() listeners on this path and receive updates in real time.">
+            <span class="fc-node-icon">🔥</span>
+            Firebase Realtime DB
+            <span class="fc-node-label">rooms/{code}/state</span>
+          </div>
+
+          <div class="fc-node github" id="n-github" style="left:60px;top:470px;width:160px;"
+            data-title="GitHub Repository" data-step="Music Source A"
+            data-desc="CloudBeat calls the GitHub Contents API to scan any public or private repo for audio files (MP3, FLAC, WAV, M4A, OGG). Raw audio files are streamed via github.com/raw URLs using crossOrigin='anonymous'. Repo playlists auto-update on load.">
+            <span class="fc-node-icon">🐙</span>
+            GitHub Repo
+            <span class="fc-node-label">Raw audio CDN</span>
+          </div>
+
+          <div class="fc-node drive" id="n-drive" style="right:60px;top:470px;width:160px;"
+            data-title="Google Drive API" data-step="Music Source B"
+            data-desc="With Google OAuth, CloudBeat calls Drive v3 API to list files in your Drive. Audio and video files are fetched using Bearer token authentication and loaded as blob URLs for playback. Full folder tree navigation is supported.">
+            <span class="fc-node-icon">📁</span>
+            Google Drive API
+            <span class="fc-node-label">v3 · blob streaming</span>
+          </div>
+
+          <!-- ROW 4: Auth & Storage -->
+          <div class="fc-node action" id="n-google-auth" style="left:60px;top:650px;width:160px;"
+            data-title="Google OAuth 2.0" data-step="Auth"
+            data-desc="CloudBeat uses GAPI (Google API JS client) for OAuth 2.0. When user clicks 'Continue with Google', a popup opens for Google login. On success, an access token is obtained — used to authorize all Google Drive API calls and to identify the user in Jam sessions.">
+            <span class="fc-node-icon">🔐</span>
+            Google OAuth
+            <span class="fc-node-label">gapi · access token</span>
+          </div>
+
+          <div class="fc-node action" id="n-local" style="right:60px;top:650px;width:160px;"
+            data-title="LocalStorage / JSON Sync" data-step="Persistence"
+            data-desc="Guest users have state saved to localStorage. Google users have a cloudbeat.json file auto-created in their Drive root. Every change (playlists, liked songs, settings, EQ, stats) is debounced and saved. The JSON can be exported and imported manually.">
+            <span class="fc-node-icon">💾</span>
+            LocalStorage / Drive JSON
+            <span class="fc-node-label">save · sync · export</span>
+          </div>
+
+          <div class="fc-node firebase" id="n-firebase-auth" style="left:50%;top:650px;transform:translateX(-50%);width:200px;"
+            data-title="Firebase App Config" data-step="Infrastructure"
+            data-desc="Firebase is loaded from CDN and initialized with CloudBeat's project config. It uses the Realtime Database (not Firestore). The SDK exposes ref, set, onValue, remove, and update for all Jam session operations. No auth is required on Firebase itself — just the room code.">
+            <span class="fc-node-icon">⚙️</span>
+            Firebase SDK Init
+            <span class="fc-node-label">Realtime DB · CDN loaded</span>
+          </div>
+
+        </div><!-- fc-canvas -->
+      </div><!-- fc-wrap -->
+    </div>
+
+    <!-- LEGEND -->
+    <div class="flow-legend reveal">
+      <div class="fl-item"><div class="fl-dot" style="background:var(--accent)"></div>Host / User Actions</div>
+      <div class="fl-item"><div class="fl-dot" style="background:var(--purple)"></div>Listener / Join Flow</div>
+      <div class="fl-item"><div class="fl-dot" style="background:var(--cyan)"></div>CloudBeat Core App</div>
+      <div class="fl-item"><div class="fl-dot" style="background:#fff"></div>GitHub (Music Source)</div>
+      <div class="fl-item"><div class="fl-dot" style="background:var(--green)"></div>Google Drive (Music Source)</div>
+      <div class="fl-item"><div class="fl-dot" style="background:var(--accent2)"></div>Firebase (Real-time Jam Sync)</div>
+      <div class="fl-item"><div class="fl-dot" style="background:var(--pink)"></div>Auth / Storage</div>
+    </div>
+
+    <!-- JAM SESSION STEP-BY-STEP -->
+    <div style="margin-top:50px;" class="reveal">
+      <div class="section-label">Jam Session Deep Dive</div>
+      <h3 style="font-family:'Bebas Neue';font-size:32px;letter-spacing:2px;color:#fff;margin-bottom:30px;">WHAT HAPPENS WHEN YOU HOST A JAM</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;">
+
+        <div style="padding:20px;background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent);">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--accent);letter-spacing:2px;margin-bottom:8px;">HOST · STEP 1</div>
+          <div style="font-family:'Bebas Neue';font-size:18px;color:#fff;margin-bottom:6px;">CODE GENERATION</div>
+          <p style="font-size:12px;color:var(--text-dim);line-height:1.7;">Host clicks "Start Jam". CloudBeat calls <code style="color:var(--cyan);font-size:11px;">genJamCode()</code> — Math.random() → base36 → toUpperCase → 6 chars. e.g. <strong style="color:var(--purple)">A3K7PZ</strong>. A unique UID is also generated for the host.</p>
+        </div>
+
+        <div style="padding:20px;background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent);">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--accent);letter-spacing:2px;margin-bottom:8px;">HOST · STEP 2</div>
+          <div style="font-family:'Bebas Neue';font-size:18px;color:#fff;margin-bottom:6px;">FIREBASE ROOM CREATED</div>
+          <p style="font-size:12px;color:var(--text-dim);line-height:1.7;">CloudBeat calls Firebase <code style="color:var(--cyan);font-size:11px;">set(ref(db, 'rooms/A3K7PZ'), {...})</code>. Writes: host info, repo source config, current track state (name, position, paused, timestamp). Room is now live.</p>
+        </div>
+
+        <div style="padding:20px;background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent);">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--accent);letter-spacing:2px;margin-bottom:8px;">HOST · STEP 3</div>
+          <div style="font-family:'Bebas Neue';font-size:18px;color:#fff;margin-bottom:6px;">CODE SHOWN IN JAM BAR</div>
+          <p style="font-size:12px;color:var(--text-dim);line-height:1.7;">The Jam Bar appears below the top navigation showing <strong style="color:var(--purple)">A3K7PZ</strong> with a pulsing live indicator. Host shares this code verbally or via copy button. The code is visible until the session ends.</p>
+        </div>
+
+        <div style="padding:20px;background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--purple);">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--purple);letter-spacing:2px;margin-bottom:8px;">LISTENER · STEP 4</div>
+          <div style="font-family:'Bebas Neue';font-size:18px;color:#fff;margin-bottom:6px;">ENTERING THE JAM CODE</div>
+          <p style="font-size:12px;color:var(--text-dim);line-height:1.7;">Listener opens CloudBeat → clicks Jam icon → enters the 6-char code. CloudBeat validates the code against Firebase. If the room exists, it reads the source config (GitHub repo) and loads it.</p>
+        </div>
+
+        <div style="padding:20px;background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--purple);">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--purple);letter-spacing:2px;margin-bottom:8px;">LISTENER · STEP 5</div>
+          <div style="font-family:'Bebas Neue';font-size:18px;color:#fff;margin-bottom:6px;">REPO SYNC + REALTIME</div>
+          <p style="font-size:12px;color:var(--text-dim);line-height:1.7;">Listener fetches the same GitHub repo as host. Then subscribes via <code style="color:var(--cyan);font-size:11px;">onValue()</code> to the Firebase room. Every state update from host is received instantly — track changes, seeks, play/pause.</p>
+        </div>
+
+        <div style="padding:20px;background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--green);">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--green);letter-spacing:2px;margin-bottom:8px;">SYNC · STEP 6</div>
+          <div style="font-family:'Bebas Neue';font-size:18px;color:#fff;margin-bottom:6px;">CONTINUOUS SYNC LOOP</div>
+          <p style="font-size:12px;color:var(--text-dim);line-height:1.7;">Host writes state to Firebase every 2 seconds via <code style="color:var(--cyan);font-size:11px;">jamWrite()</code>. On track change or seek, it writes immediately. Listeners receive these and auto-seek to match the host's position with lag compensation.</p>
+        </div>
+
+        <div style="padding:20px;background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent2);">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--accent2);letter-spacing:2px;margin-bottom:8px;">OPTIONAL · STEP 7</div>
+          <div style="font-family:'Bebas Neue';font-size:18px;color:#fff;margin-bottom:6px;">GRANT LISTENER CONTROL</div>
+          <p style="font-size:12px;color:var(--text-dim);line-height:1.7;">Host can click a listener's name chip in the Jam Bar and grant them DJ control. That listener can now change tracks and seek. Host can revoke at any time. Only one listener can have control at once.</p>
+        </div>
+
+        <div style="padding:20px;background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--pink);">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--pink);letter-spacing:2px;margin-bottom:8px;">END · STEP 8</div>
+          <div style="font-family:'Bebas Neue';font-size:18px;color:#fff;margin-bottom:6px;">LEAVING THE JAM</div>
+          <p style="font-size:12px;color:var(--text-dim);line-height:1.7;">When Host leaves, Firebase writes <code style="color:var(--cyan);font-size:11px;">hostGone: true</code> and the room is removed. All listeners are notified and automatically disconnected. Listener presence entries in <code style="color:var(--cyan);font-size:11px;">rooms/{code}/listeners</code> are cleaned up.</p>
+        </div>
+
       </div>
     </div>
   </div>
 </section>
 
 <!-- HOW IT WORKS -->
-<div id="how">
-  <div class="inner">
-    <div class="section-label reveal">// Under The Hood</div>
-    <h2 class="section-title reveal">How CloudBeat<br>Works</h2>
-    <p class="section-sub reveal">No magic. Just clean architecture. Here's exactly what happens when you hit play.</p>
-    <div class="flow-diagram reveal">
-      <div class="flow-nodes">
-        <div class="flow-node">
-          <div class="flow-num">01</div>
-          <div class="flow-icon">🔗</div>
-          <div class="flow-node-title">Connect Your Source</div>
-          <div class="flow-node-desc">You link a GitHub repository (e.g. <code style="font-family:'JetBrains Mono',monospace;font-size:10px;background:var(--surface2);padding:1px 5px;">username/my-music</code>) or sign in with Google to access your Drive.</div>
-          <div class="flow-badge badge-github">GitHub Repos</div>
-          <div class="flow-badge badge-drive" style="margin-left:4px;">Google Drive</div>
-        </div>
-        <div class="flow-arrow">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
-        </div>
-        <div class="flow-node">
-          <div class="flow-num">02</div>
-          <div class="flow-icon">🔍</div>
-          <div class="flow-node-title">Scan & Index</div>
-          <div class="flow-node-desc">CloudBeat calls the GitHub API or Google Drive API to scan for audio files (mp3, wav, flac, ogg, m4a, aac, opus) and builds your library.</div>
-          <div class="flow-badge badge-github">GitHub API v3</div>
-          <div class="flow-badge badge-drive" style="margin-left:4px;">Drive API v3</div>
-        </div>
-        <div class="flow-arrow">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
-        </div>
-        <div class="flow-node">
-          <div class="flow-num">03</div>
-          <div class="flow-icon">🎵</div>
-          <div class="flow-node-title">Stream Directly</div>
-          <div class="flow-node-desc">Audio streams directly from <code style="font-family:'JetBrains Mono',monospace;font-size:10px;background:var(--surface2);padding:1px 5px;">raw.githubusercontent.com</code> or from a secure Drive blob. Nothing touches any external server.</div>
-          <div class="flow-badge badge-github">Raw CDN</div>
-          <div class="flow-badge badge-drive" style="margin-left:4px;">Blob URL</div>
-        </div>
-        <div class="flow-arrow">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
-        </div>
-        <div class="flow-node">
-          <div class="flow-num">04</div>
-          <div class="flow-icon">🔊</div>
-          <div class="flow-node-title">Web Audio Processing</div>
-          <div class="flow-node-desc">Audio passes through a 10-band Web Audio API equalizer chain in your browser before reaching your speakers. All processing happens locally.</div>
-          <div class="flow-badge badge-github">Web Audio API</div>
-          <div class="flow-badge badge-fire" style="margin-left:4px;">Local Only</div>
-        </div>
-      </div>
+<section class="hiw-section" id="how">
+  <div class="hiw-inner">
+    <div class="reveal">
+      <div class="section-label">Quick Start</div>
+      <h2 class="section-title">START IN 60 SECONDS</h2>
     </div>
-  </div>
-</div>
-
-<!-- INTEGRATIONS -->
-<section id="integrations">
-  <div class="section-label reveal">// Powered By</div>
-  <h2 class="section-title reveal">Three Integrations.<br>Total Control.</h2>
-  <p class="section-sub reveal">CloudBeat is built around services you already trust — and uses them only to serve you, never to collect from you.</p>
-
-  <div class="integrations-grid reveal">
-    <!-- GITHUB -->
-    <div class="int-card github">
-      <div class="int-card-tag">Primary Source</div>
-      <div class="int-logo">🐙</div>
-      <div class="int-name">GitHub</div>
-      <p class="int-desc">Connect any public GitHub repository containing audio files. CloudBeat scans the entire tree and streams files directly via GitHub's raw content CDN.</p>
-      <div class="int-flow">
-        <div class="int-step"><div class="int-step-num">01</div>You enter <code style="font-family:'JetBrains Mono',monospace;">username/repo-name</code></div>
-        <div class="int-step"><div class="int-step-num">02</div>CloudBeat calls <code style="font-family:'JetBrains Mono',monospace;">api.github.com/repos/.../contents</code></div>
-        <div class="int-step"><div class="int-step-num">03</div>Audio files are listed and streamed via <code style="font-family:'JetBrains Mono',monospace;">raw.githubusercontent.com</code></div>
-        <div class="int-step"><div class="int-step-num">04</div>No login required for public repos</div>
+    <div class="hiw-steps reveal">
+      <div class="hiw-step">
+        <div class="hiw-num">01</div>
+        <div class="hiw-step-title">OPEN THE FILE</div>
+        <p class="hiw-step-desc">Download index.html and open it in Chrome, Firefox, Safari, or Edge. No server needed — it runs locally or from any static host.</p>
       </div>
-      <div class="data-path">
-        <div class="data-path-label">Data Flow</div>
-        <div class="data-packet"></div>
+      <div class="hiw-step">
+        <div class="hiw-num">02</div>
+        <div class="hiw-step-title">LOGIN OR GUEST</div>
+        <p class="hiw-step-desc">Sign in with Google for full Drive sync, or enter any name for an instant guest session. Your data is stored locally until you decide to link Google.</p>
       </div>
-    </div>
-
-    <!-- GOOGLE DRIVE -->
-    <div class="int-card drive">
-      <div class="int-card-tag">Personal Storage</div>
-      <div class="int-logo">🌐</div>
-      <div class="int-name">Google Drive</div>
-      <p class="int-desc">Sign in with your Google account to browse and play audio and video files from your personal Drive. Your credentials stay with you — no data leaves your browser.</p>
-      <div class="int-flow">
-        <div class="int-step"><div class="int-step-num">01</div>Google OAuth 2.0 sign-in (your account, your consent)</div>
-        <div class="int-step"><div class="int-step-num">02</div>Drive API v3 lists your audio/video files</div>
-        <div class="int-step"><div class="int-step-num">03</div>File is fetched as a Blob and played locally</div>
-        <div class="int-step"><div class="int-step-num">04</div>Playlists & likes sync to a private <code style="font-family:'JetBrains Mono',monospace;">cloudbeat.json</code> in your Drive AppData</div>
+      <div class="hiw-step">
+        <div class="hiw-num">03</div>
+        <div class="hiw-step-title">ADD YOUR MUSIC</div>
+        <p class="hiw-step-desc">Create a playlist from a GitHub repo (enter owner/repo) or browse your Google Drive for audio files. CloudBeat scans everything automatically.</p>
       </div>
-      <div class="data-path">
-        <div class="data-path-label">Data Flow</div>
-        <div class="data-packet"></div>
-      </div>
-    </div>
-
-    <!-- FIREBASE -->
-    <div class="int-card firebase">
-      <div class="int-card-tag">Jam Sessions Only</div>
-      <div class="int-logo">🔥</div>
-      <div class="int-name">Firebase</div>
-      <p class="int-desc">Firebase is used exclusively for real-time Jam Sessions — letting friends sync playback across the world. You supply your own Firebase project. No developer access, ever.</p>
-      <div class="int-flow">
-        <div class="int-step"><div class="int-step-num">01</div>You provide your own Firebase Realtime Database URL</div>
-        <div class="int-step"><div class="int-step-num">02</div>Only playback position, track name & timestamp are written</div>
-        <div class="int-step"><div class="int-step-num">03</div>Listeners sync in real-time via your database</div>
-        <div class="int-step"><div class="int-step-num">04</div>Zero access by the CloudBeat developer</div>
-      </div>
-      <div class="data-path">
-        <div class="data-path-label">Data Flow</div>
-        <div class="data-packet"></div>
+      <div class="hiw-step">
+        <div class="hiw-num">04</div>
+        <div class="hiw-step-title">START A JAM</div>
+        <p class="hiw-step-desc">Hit the Jam button, get your code, share with friends. Everyone hears the same music in sync — no matter where in the world they are.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- NOW PLAYING VISUAL -->
-<div id="now-playing-visual">
-  <div class="inner">
+<!-- TECH STACK -->
+<section class="tech-section" id="tech">
+  <div class="tech-inner">
     <div class="reveal">
-      <div class="section-label">// Beautifully Designed</div>
-      <h2 class="section-title">A Player Worth<br>Opening Every Day</h2>
-      <p class="section-sub">From the animated disc to the floating particles in fullscreen mode — every pixel was considered. Because your music deserves a beautiful home.</p>
+      <div class="section-label">Technology</div>
+      <h2 class="section-title">BUILT WITH</h2>
     </div>
-    <div class="player-mockup reveal">
-      <div class="pm-topbar">
-        <div class="pm-dots">
-          <div class="pm-dot"></div>
-          <div class="pm-dot"></div>
-          <div class="pm-dot"></div>
-        </div>
-        <div class="pm-title">CLOUDBEAT // NOW PLAYING</div>
+    <div class="tech-grid reveal">
+      <div class="tech-card">
+        <div class="tc-icon">🐙</div>
+        <div><div class="tc-name">GitHub API</div><div class="tc-role">Music source · Repo scanner</div></div>
       </div>
-      <div class="pm-art">
-        <div class="pm-art-disc">🎵</div>
+      <div class="tech-card">
+        <div class="tc-icon">📁</div>
+        <div><div class="tc-name">Google Drive API v3</div><div class="tc-role">Audio streaming · File listing</div></div>
       </div>
-      <div class="pm-song">My Own Track</div>
-      <div class="pm-artist" style="font-family:'JetBrains Mono',monospace;">// from your-repo/music</div>
-      <div class="waveform" id="waveform" style="margin-top:14px;"></div>
-      <div class="pm-bar">
-        <div class="pm-bar-fill"></div>
+      <div class="tech-card">
+        <div class="tc-icon">🔐</div>
+        <div><div class="tc-name">Google OAuth 2.0</div><div class="tc-role">Authentication · GAPI</div></div>
       </div>
-      <div class="pm-times"><span>1:24</span><span>3:47</span></div>
-      <div class="pm-controls">
-        <div class="pm-btn">⏮</div>
-        <div class="pm-btn">🔀</div>
-        <div class="pm-btn main">▶</div>
-        <div class="pm-btn">🔁</div>
-        <div class="pm-btn">⏭</div>
+      <div class="tech-card">
+        <div class="tc-icon">🔥</div>
+        <div><div class="tc-name">Firebase Realtime DB</div><div class="tc-role">Jam sessions · Live sync</div></div>
       </div>
-    </div>
-  </div>
-</div>
-
-<!-- FEATURES -->
-<section id="features">
-  <div class="section-label reveal">// Feature Set</div>
-  <h2 class="section-title reveal">Everything You<br>Need. Nothing Extra.</h2>
-
-  <div class="features-grid reveal">
-    <div class="feat-card">
-      <div class="feat-icon-wrap">🎛</div>
-      <div class="feat-title">10-Band Equalizer</div>
-      <div class="feat-desc">Full vertical 10-band EQ with presets: Flat, Bass Boost, Treble, Vocal, Electronic, Hip-Hop, Classical. All processing happens locally via the Web Audio API.</div>
-      <div class="feat-tag">Web Audio API</div>
-    </div>
-    <div class="feat-card">
-      <div class="feat-icon-wrap">🎙</div>
-      <div class="feat-title">Jam Sessions</div>
-      <div class="feat-desc">Host or join real-time listening sessions with friends anywhere in the world. Grant playback control. Sync within milliseconds. Powered by your own Firebase.</div>
-      <div class="feat-tag">Firebase Realtime</div>
-    </div>
-    <div class="feat-card">
-      <div class="feat-icon-wrap">📂</div>
-      <div class="feat-title">Smart Queue</div>
-      <div class="feat-desc">Drag-to-reorder queue panel. Play next. Add to queue. Shuffle. Repeat one or all. Full control over exactly what plays — and when.</div>
-      <div class="feat-tag">Drag & Drop</div>
-    </div>
-    <div class="feat-card">
-      <div class="feat-icon-wrap">☁️</div>
-      <div class="feat-title">Drive Sync</div>
-      <div class="feat-desc">When signed in with Google, your playlists, liked songs, and settings automatically sync to a private <code style="font-family:'JetBrains Mono',monospace;font-size:10px;">cloudbeat.json</code> in your Drive AppData.</div>
-      <div class="feat-tag">Google Drive API</div>
-    </div>
-    <div class="feat-card">
-      <div class="feat-icon-wrap">🎨</div>
-      <div class="feat-title">Full Color Customizer</div>
-      <div class="feat-desc">Personalize every UI accent color from the Colors tab in Settings. Your player, your palette. Every change is instant and saved to your profile.</div>
-      <div class="feat-tag">CSS Variables</div>
-    </div>
-    <div class="feat-card">
-      <div class="feat-icon-wrap">🖥</div>
-      <div class="feat-title">Fullscreen Now Playing</div>
-      <div class="feat-desc">Immersive fullscreen player with album artwork, animated floating particles, spinning disc animation, and full gesture controls.</div>
-      <div class="feat-tag">Canvas Particles</div>
-    </div>
-    <div class="feat-card">
-      <div class="feat-icon-wrap">❤️</div>
-      <div class="feat-title">Liked Songs & Playlists</div>
-      <div class="feat-desc">Create and manage multiple playlists. Like individual songs. Repo playlists auto-populate from your GitHub structure. Import/export as JSON.</div>
-      <div class="feat-tag">LocalStorage + Drive</div>
-    </div>
-    <div class="feat-card">
-      <div class="feat-icon-wrap">📊</div>
-      <div class="feat-title">Listen Stats</div>
-      <div class="feat-desc">CloudBeat tracks how many times you've played each song, locally. Your most listened-to tracks, ranked and visualized — privately, just for you.</div>
-      <div class="feat-tag">Local Only</div>
-    </div>
-    <div class="feat-card">
-      <div class="feat-icon-wrap">⌨️</div>
-      <div class="feat-title">Keyboard Shortcuts</div>
-      <div class="feat-desc">Fully customizable hotkeys for play/pause, skip, volume, shuffle, repeat, fullscreen, and more. Set them your way from the Settings panel.</div>
-      <div class="feat-tag">Configurable</div>
-    </div>
-  </div>
-</section>
-
-<!-- ════════════════════════════════════════════
-     ARCHITECTURE FLOWCHART SECTION
-════════════════════════════════════════════ -->
-<div id="architecture">
-  <div class="inner">
-    <div class="section-label reveal">// System Architecture</div>
-    <h2 class="section-title reveal">How Every Byte<br>Flows — In Depth.</h2>
-    <p class="section-sub reveal">Every data path, every API call, every handshake — laid bare. CloudBeat has no hidden servers. Here is the complete wiring diagram of exactly how it works, from the moment you hit play to the moment your friend hears the same song across the world.</p>
-
-    <!-- TAB SWITCHER -->
-    <div class="arch-tabs reveal">
-      <button class="arch-tab active" onclick="switchArch('solo')">Solo Playback</button>
-      <button class="arch-tab" onclick="switchArch('jam')">Jam Session</button>
-      <button class="arch-tab" onclick="switchArch('drive')">Google Drive Mode</button>
-    </div>
-
-    <!-- DIAGRAM AREA -->
-    <div class="arch-diagram">
-
-      <!-- ══ PANEL 1: SOLO PLAYBACK ══ -->
-      <div class="arch-panel active" id="arch-solo">
-        <div class="arch-canvas">
-          <svg class="arch-svg" viewBox="0 0 1100 520" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <marker id="arrowO" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#ff6b1a"/></marker>
-              <marker id="arrowP" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#a78bfa"/></marker>
-              <marker id="arrowC" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#06b6d4"/></marker>
-              <marker id="arrowG" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#22c55e"/></marker>
-            </defs>
-
-            <!-- ── ZONE: BROWSER ── -->
-            <rect x="10" y="200" width="500" height="290" rx="10" fill="none" stroke="rgba(167,139,250,0.2)" stroke-width="1" stroke-dasharray="6 4"/>
-            <text x="22" y="220" fill="rgba(167,139,250,0.5)" font-family="'JetBrains Mono',monospace" font-size="10" letter-spacing="3">USER BROWSER</text>
-
-            <!-- ── ZONE: EXTERNAL ── -->
-            <rect x="580" y="20" width="500" height="480" rx="10" fill="none" stroke="rgba(255,107,26,0.15)" stroke-width="1" stroke-dasharray="6 4"/>
-            <text x="594" y="40" fill="rgba(255,107,26,0.4)" font-family="'JetBrains Mono',monospace" font-size="10" letter-spacing="3">EXTERNAL SERVICES (NO CLOUDBEAT SERVER)</text>
-
-            <!-- ═══ NODES ═══ -->
-            <!-- User -->
-            <rect x="30" y="250" width="140" height="60" rx="6" fill="#0c0f16" stroke="rgba(167,139,250,0.5)" stroke-width="1"/>
-            <text x="100" y="275" text-anchor="middle" fill="#a78bfa" font-family="'Bebas Neue',sans-serif" font-size="18" letter-spacing="2">USER</text>
-            <text x="100" y="295" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">clicks play</text>
-
-            <!-- CloudBeat App -->
-            <rect x="230" y="240" width="230" height="80" rx="6" fill="#0c0f16" stroke="rgba(255,107,26,0.5)" stroke-width="1.5"/>
-            <text x="345" y="268" text-anchor="middle" fill="#ff6b1a" font-family="'Bebas Neue',sans-serif" font-size="20" letter-spacing="3">CLOUDBEAT APP</text>
-            <text x="345" y="287" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">browser-only · zero server · pure JS</text>
-            <text x="345" y="303" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">Web Audio API · EQ · Queue · Playlists</text>
-
-            <!-- Web Audio API -->
-            <rect x="30" y="380" width="200" height="56" rx="6" fill="#0c0f16" stroke="rgba(255,107,26,0.3)" stroke-width="1"/>
-            <text x="130" y="405" text-anchor="middle" fill="#f59e0b" font-family="'Bebas Neue',sans-serif" font-size="16" letter-spacing="2">WEB AUDIO API</text>
-            <text x="130" y="423" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">10-band EQ · local processing</text>
-
-            <!-- Speakers -->
-            <rect x="270" y="390" width="130" height="46" rx="6" fill="#0c0f16" stroke="rgba(34,197,94,0.3)" stroke-width="1"/>
-            <text x="335" y="409" text-anchor="middle" fill="#22c55e" font-family="'Bebas Neue',sans-serif" font-size="15" letter-spacing="2">SPEAKERS</text>
-            <text x="335" y="426" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">your device output</text>
-
-            <!-- GitHub API -->
-            <rect x="600" y="50" width="200" height="60" rx="6" fill="#0c0f16" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-            <text x="700" y="76" text-anchor="middle" fill="#c4cdd8" font-family="'Bebas Neue',sans-serif" font-size="18" letter-spacing="2">GITHUB API</text>
-            <text x="700" y="95" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">api.github.com · lists files</text>
-
-            <!-- GitHub Raw CDN -->
-            <rect x="600" y="160" width="200" height="60" rx="6" fill="#0c0f16" stroke="rgba(255,107,26,0.4)" stroke-width="1"/>
-            <text x="700" y="185" text-anchor="middle" fill="#ff6b1a" font-family="'Bebas Neue',sans-serif" font-size="16" letter-spacing="2">GITHUB RAW CDN</text>
-            <text x="700" y="203" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">raw.githubusercontent.com · streams audio</text>
-
-            <!-- Your Repo -->
-            <rect x="860" y="100" width="190" height="80" rx="6" fill="#0c0f16" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
-            <text x="955" y="128" text-anchor="middle" fill="#c4cdd8" font-family="'Bebas Neue',sans-serif" font-size="15" letter-spacing="2">YOUR REPO</text>
-            <text x="955" y="147" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">username/music</text>
-            <text x="955" y="163" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">mp3 · wav · flac · ogg</text>
-
-            <!-- localStorage -->
-            <rect x="600" y="300" width="200" height="60" rx="6" fill="#0c0f16" stroke="rgba(34,197,94,0.3)" stroke-width="1"/>
-            <text x="700" y="325" text-anchor="middle" fill="#22c55e" font-family="'Bebas Neue',sans-serif" font-size="15" letter-spacing="2">LOCALSTORAGE</text>
-            <text x="700" y="343" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">playlists · likes · settings · stats</text>
-
-            <!-- ═══ ANIMATED FLOW LINES ═══ -->
-            <!-- User → CloudBeat -->
-            <line x1="170" y1="280" x2="228" y2="280" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arrowP)"/>
-            <!-- CloudBeat → GitHub API (request: list files) -->
-            <path d="M460 265 Q540 265 540 80 Q540 80 598 80" fill="none" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#arrowP)"
-              style="animation: dashFlow 2s linear infinite"/>
-            <!-- GitHub API → CloudBeat (file list response) -->
-            <path d="M598 95 Q530 95 530 300 Q530 310 462 300" fill="none" stroke="#a78bfa" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#arrowP)" opacity="0.5"
-              style="animation: dashFlowRev 2s linear infinite"/>
-
-            <!-- GitHub API ↔ GitHub Repo -->
-            <path d="M800 80 L858 130" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#arrowG)" style="animation: dashFlow 2s linear infinite"/>
-            <path d="M858 150 L800 105" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#arrowG)" opacity="0.5" style="animation: dashFlowRev 2s linear infinite"/>
-
-            <!-- CloudBeat → GitHub Raw CDN (audio fetch) -->
-            <path d="M460 295 Q540 295 540 190 Q540 190 598 190" fill="none" stroke="#ff6b1a" stroke-width="2" stroke-dasharray="8 4" marker-end="url(#arrowO)"
-              style="animation: dashFlow 1.4s linear infinite"/>
-
-            <!-- GitHub Raw CDN → CloudBeat (audio stream) -->
-            <path d="M598 210 Q520 210 520 330 Q520 340 462 320" fill="none" stroke="#ff6b1a" stroke-width="2.5" marker-end="url(#arrowO)"
-              style="animation: dashFlow 0.8s linear infinite"/>
-
-            <!-- GitHub Raw CDN ↔ Repo -->
-            <path d="M800 190 L858 160" fill="none" stroke="rgba(255,107,26,0.3)" stroke-width="1" marker-end="url(#arrowO)" style="animation: dashFlow 1.4s linear infinite"/>
-
-            <!-- CloudBeat → Web Audio -->
-            <path d="M280 320 L230 380" fill="none" stroke="#ff6b1a" stroke-width="1.5" marker-end="url(#arrowO)" style="animation: dashFlow 1s linear infinite"/>
-
-            <!-- Web Audio → Speakers -->
-            <line x1="230" y1="413" x2="268" y2="413" stroke="#22c55e" stroke-width="1.5" marker-end="url(#arrowG)" style="animation: dashFlow 1.2s linear infinite"/>
-
-            <!-- CloudBeat → localStorage -->
-            <path d="M460 310 Q540 310 540 330 Q540 330 598 330" fill="none" stroke="#22c55e" stroke-width="1" stroke-dasharray="5 4" marker-end="url(#arrowG)" style="animation: dashFlow 3s linear infinite"/>
-
-            <!-- ═══ LABELS ON ARROWS ═══ -->
-            <rect x="474" y="256" width="60" height="16" rx="2" fill="#07090d"/>
-            <text x="504" y="267" text-anchor="middle" fill="#a78bfa" font-family="'JetBrains Mono',monospace" font-size="8">list files</text>
-
-            <rect x="474" y="186" width="80" height="16" rx="2" fill="#07090d"/>
-            <text x="514" y="197" text-anchor="middle" fill="#ff6b1a" font-family="'JetBrains Mono',monospace" font-size="8">fetch audio</text>
-
-            <rect x="464" y="326" width="94" height="16" rx="2" fill="#07090d"/>
-            <text x="511" y="337" text-anchor="middle" fill="#ff6b1a" font-family="'JetBrains Mono',monospace" font-size="8">audio stream (bytes)</text>
-
-            <rect x="508" y="326" width="90" height="16" rx="2" fill="#07090d"/>
-            <text x="553" y="337" text-anchor="middle" fill="#22c55e" font-family="'JetBrains Mono',monospace" font-size="8" opacity="0.7">save prefs</text>
-          </svg>
-        </div>
-
-        <!-- DETAIL CARDS: Solo -->
-        <div class="arch-detail-grid">
-          <div class="arch-detail-card active" id="solo-c1" onclick="soloCard(1)">
-            <div class="adc-icon">🔍</div>
-            <div class="adc-title">Step 1 — Scan Repo</div>
-            <div class="adc-body">CloudBeat calls the GitHub API to scan your repository and build the song list.</div>
-            <div class="adc-steps">
-              <div class="adc-step"><div class="adc-step-n">01</div><span>GET api.github.com/repos/{owner}/{repo}/contents</span></div>
-              <div class="adc-step"><div class="adc-step-n">02</div><span>Recursively scans all folders</span></div>
-              <div class="adc-step"><div class="adc-step-n">03</div><span>Filters: .mp3 .wav .flac .ogg .m4a .aac .opus</span></div>
-              <div class="adc-step"><div class="adc-step-n">04</div><span>Builds song objects with raw URLs</span></div>
-            </div>
-          </div>
-          <div class="arch-detail-card" id="solo-c2" onclick="soloCard(2)">
-            <div class="adc-icon">📡</div>
-            <div class="adc-title">Step 2 — Stream Audio</div>
-            <div class="adc-body">The audio element's src is set to a raw GitHub URL. The browser streams it directly — no proxy, no middleware.</div>
-            <div class="adc-steps">
-              <div class="adc-step"><div class="adc-step-n">01</div><span>audio.crossOrigin = 'anonymous'</span></div>
-              <div class="adc-step"><div class="adc-step-n">02</div><span>audio.src = raw.githubusercontent.com/...</span></div>
-              <div class="adc-step"><div class="adc-step-n">03</div><span>audio.load() → wait for canplay event</span></div>
-              <div class="adc-step"><div class="adc-step-n">04</div><span>audio.play() → stream begins</span></div>
-            </div>
-          </div>
-          <div class="arch-detail-card" id="solo-c3" onclick="soloCard(3)">
-            <div class="adc-icon">🎛</div>
-            <div class="adc-title">Step 3 — EQ Processing</div>
-            <div class="adc-body">The raw audio stream passes through a 10-band equalizer chain built entirely in the Web Audio API before reaching your speakers.</div>
-            <div class="adc-steps">
-              <div class="adc-step"><div class="adc-step-n">01</div><span>AudioContext.createMediaElementSource(audio)</span></div>
-              <div class="adc-step"><div class="adc-step-n">02</div><span>10× BiquadFilterNode (lowshelf → peaking → highshelf)</span></div>
-              <div class="adc-step"><div class="adc-step-n">03</div><span>Chain: source → eq[0] → … → eq[9] → destination</span></div>
-              <div class="adc-step"><div class="adc-step-n">04</div><span>All processing in-browser, zero latency added</span></div>
-            </div>
-          </div>
-          <div class="arch-detail-card" id="solo-c4" onclick="soloCard(4)">
-            <div class="adc-icon">💾</div>
-            <div class="adc-title">Step 4 — Save State</div>
-            <div class="adc-body">Your playlists, liked songs, EQ settings, volume, and listen stats are persisted to localStorage — or synced to Google Drive if signed in.</div>
-            <div class="adc-steps">
-              <div class="adc-step"><div class="adc-step-n">01</div><span>Debounced save on every meaningful action</span></div>
-              <div class="adc-step"><div class="adc-step-n">02</div><span>localStorage: cb_settings, cb_playlists, cb_stats</span></div>
-              <div class="adc-step"><div class="adc-step-n">03</div><span>Drive sync: writes cloudbeat.json to AppData</span></div>
-              <div class="adc-step"><div class="adc-step-n">04</div><span>No data ever leaves your own accounts</span></div>
-            </div>
-          </div>
-        </div>
+      <div class="tech-card">
+        <div class="tc-icon">🎵</div>
+        <div><div class="tc-name">HTML5 Audio API</div><div class="tc-role">Playback · Streaming</div></div>
       </div>
-
-      <!-- ══ PANEL 2: JAM SESSION ══ -->
-      <div class="arch-panel" id="arch-jam">
-        <div class="arch-canvas">
-          <svg class="arch-svg" viewBox="0 0 1100 600" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <marker id="arrowO2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#ff6b1a"/></marker>
-              <marker id="arrowA2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#f59e0b"/></marker>
-              <marker id="arrowG2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#22c55e"/></marker>
-              <marker id="arrowP2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#a78bfa"/></marker>
-            </defs>
-
-            <!-- ── HOST BROWSER ZONE ── -->
-            <rect x="10" y="60" width="330" height="500" rx="10" fill="none" stroke="rgba(167,139,250,0.2)" stroke-width="1" stroke-dasharray="6 4"/>
-            <text x="22" y="80" fill="rgba(167,139,250,0.45)" font-family="'JetBrains Mono',monospace" font-size="10" letter-spacing="3">HOST BROWSER</text>
-
-            <!-- ── FIREBASE ZONE (CENTER) ── -->
-            <rect x="400" y="140" width="280" height="300" rx="10" fill="none" stroke="rgba(245,158,11,0.25)" stroke-width="1" stroke-dasharray="6 4"/>
-            <text x="414" y="160" fill="rgba(245,158,11,0.5)" font-family="'JetBrains Mono',monospace" font-size="10" letter-spacing="3">YOUR FIREBASE (REALTIME DB)</text>
-
-            <!-- ── USER 2 BROWSER ZONE ── -->
-            <rect x="750" y="60" width="330" height="500" rx="10" fill="none" stroke="rgba(34,197,94,0.2)" stroke-width="1" stroke-dasharray="6 4"/>
-            <text x="762" y="80" fill="rgba(34,197,94,0.45)" font-family="'JetBrains Mono',monospace" font-size="10" letter-spacing="3">LISTENER BROWSER</text>
-
-            <!-- GITHUB RAW (top center) -->
-            <rect x="430" y="30" width="220" height="52" rx="6" fill="#0c0f16" stroke="rgba(255,107,26,0.3)" stroke-width="1"/>
-            <text x="540" y="53" text-anchor="middle" fill="#ff6b1a" font-family="'Bebas Neue',sans-serif" font-size="17" letter-spacing="2">GITHUB RAW CDN</text>
-            <text x="540" y="69" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">raw.githubusercontent.com</text>
-
-            <!-- HOST: User 1 -->
-            <rect x="30" y="100" width="150" height="56" rx="6" fill="#0c0f16" stroke="rgba(167,139,250,0.5)" stroke-width="1"/>
-            <text x="105" y="124" text-anchor="middle" fill="#a78bfa" font-family="'Bebas Neue',sans-serif" font-size="17" letter-spacing="2">HOST / USER 1</text>
-            <text x="105" y="142" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">controls playback</text>
-
-            <!-- HOST: CloudBeat -->
-            <rect x="30" y="200" width="290" height="70" rx="6" fill="#0c0f16" stroke="rgba(255,107,26,0.5)" stroke-width="1.5"/>
-            <text x="175" y="227" text-anchor="middle" fill="#ff6b1a" font-family="'Bebas Neue',sans-serif" font-size="18" letter-spacing="3">CLOUDBEAT</text>
-            <text x="175" y="245" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">plays audio · writes jam state</text>
-            <text x="175" y="259" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">on: play · pause · seek → jamWrite()</text>
-
-            <!-- HOST: Speakers -->
-            <rect x="30" y="320" width="130" height="46" rx="6" fill="#0c0f16" stroke="rgba(34,197,94,0.3)" stroke-width="1"/>
-            <text x="95" y="339" text-anchor="middle" fill="#22c55e" font-family="'Bebas Neue',sans-serif" font-size="14" letter-spacing="2">SPEAKERS</text>
-            <text x="95" y="355" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">host hears audio</text>
-
-            <!-- HOST: Jam Code -->
-            <rect x="170" y="320" width="150" height="60" rx="6" fill="rgba(245,158,11,0.06)" stroke="rgba(245,158,11,0.4)" stroke-width="1"/>
-            <text x="245" y="343" text-anchor="middle" fill="#f59e0b" font-family="'Bebas Neue',sans-serif" font-size="14" letter-spacing="2">JAM CODE</text>
-            <text x="245" y="362" text-anchor="middle" fill="#f59e0b" font-family="'Bebas Neue',sans-serif" font-size="20" letter-spacing="8">AB3X7</text>
-            <text x="245" y="375" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="8">shared with friends</text>
-
-            <!-- FIREBASE: DB Node -->
-            <rect x="420" y="200" width="240" height="130" rx="6" fill="#0c0f16" stroke="rgba(245,158,11,0.4)" stroke-width="1"/>
-            <text x="540" y="226" text-anchor="middle" fill="#f59e0b" font-family="'Bebas Neue',sans-serif" font-size="17" letter-spacing="2">REALTIME DATABASE</text>
-            <text x="540" y="246" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">/jam/AB3X7/state</text>
-            <!-- JSON preview -->
-            <rect x="432" y="256" width="216" height="64" rx="4" fill="#070910"/>
-            <text x="442" y="272" fill="#22c55e" font-family="'JetBrains Mono',monospace" font-size="8">trackName: "song.mp3"</text>
-            <text x="442" y="286" fill="#22c55e" font-family="'JetBrains Mono',monospace" font-size="8">position:  142.3</text>
-            <text x="442" y="300" fill="#22c55e" font-family="'JetBrains Mono',monospace" font-size="8">paused:    false</text>
-            <text x="442" y="314" fill="#22c55e" font-family="'JetBrains Mono',monospace" font-size="8">ts:        1719234580124</text>
-
-            <!-- FIREBASE: Push notification indicator -->
-            <rect x="420" y="360" width="240" height="56" rx="6" fill="#0c0f16" stroke="rgba(245,158,11,0.2)" stroke-width="1"/>
-            <text x="540" y="382" text-anchor="middle" fill="#f59e0b" font-family="'Bebas Neue',sans-serif" font-size="14" letter-spacing="2">PUSH TO SUBSCRIBERS</text>
-            <text x="540" y="398" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="8">onValue() → delta dispatched ~50-200ms</text>
-            <text x="540" y="411" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="8">websocket · no polling needed</text>
-
-            <!-- USER 2: Entry -->
-            <rect x="810" y="100" width="250" height="56" rx="6" fill="#0c0f16" stroke="rgba(34,197,94,0.5)" stroke-width="1"/>
-            <text x="935" y="124" text-anchor="middle" fill="#22c55e" font-family="'Bebas Neue',sans-serif" font-size="17" letter-spacing="2">USER 2 (LISTENER)</text>
-            <text x="935" y="142" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">enters jam code AB3X7</text>
-
-            <!-- USER 2: CloudBeat -->
-            <rect x="770" y="200" width="290" height="70" rx="6" fill="#0c0f16" stroke="rgba(255,107,26,0.5)" stroke-width="1.5"/>
-            <text x="915" y="227" text-anchor="middle" fill="#ff6b1a" font-family="'Bebas Neue',sans-serif" font-size="18" letter-spacing="3">CLOUDBEAT</text>
-            <text x="915" y="245" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">reads jam state · applies lag correction</text>
-            <text x="915" y="259" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">seeks to: position + networkLag</text>
-
-            <!-- USER 2: Speakers -->
-            <rect x="770" y="320" width="130" height="46" rx="6" fill="#0c0f16" stroke="rgba(34,197,94,0.3)" stroke-width="1"/>
-            <text x="835" y="339" text-anchor="middle" fill="#22c55e" font-family="'Bebas Neue',sans-serif" font-size="14" letter-spacing="2">SPEAKERS</text>
-            <text x="835" y="355" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">hears same audio ~50ms later</text>
-
-            <!-- LAG CORRECTION NOTE -->
-            <rect x="770" y="400" width="290" height="56" rx="6" fill="rgba(6,182,212,0.05)" stroke="rgba(6,182,212,0.2)" stroke-width="1"/>
-            <text x="915" y="422" text-anchor="middle" fill="#06b6d4" font-family="'Bebas Neue',sans-serif" font-size="13" letter-spacing="2">LAG CORRECTION</text>
-            <text x="915" y="438" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="8">lag = (Date.now() - state.ts) / 1000</text>
-            <text x="915" y="451" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="8">seekTo = position + lag (max 30s)</text>
-
-            <!-- ═══ FLOW LINES ═══ -->
-            <!-- User1 → CloudBeat (host) -->
-            <line x1="105" y1="156" x2="105" y2="198" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arrowP2)" style="animation: dashFlow 1.5s linear infinite"/>
-
-            <!-- CloudBeat → GitHub Raw (both browsers fetch same URL) -->
-            <path d="M175 200 Q175 100 430 56" fill="none" stroke="#ff6b1a" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#arrowO2)" style="animation: dashFlow 1.2s linear infinite"/>
-            <path d="M915 200 Q915 100 650 56" fill="none" stroke="#ff6b1a" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#arrowO2)" style="animation: dashFlow 1.2s linear infinite 0.4s"/>
-
-            <!-- CloudBeat → Speakers (host) -->
-            <line x1="95" y1="270" x2="95" y2="318" stroke="#22c55e" stroke-width="1.5" marker-end="url(#arrowG2)" style="animation: dashFlow 1s linear infinite"/>
-
-            <!-- CloudBeat (host) → Firebase WRITE -->
-            <path d="M320 235 Q370 235 418 265" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="8 4" marker-end="url(#arrowA2)" style="animation: dashFlow 1s linear infinite"/>
-            <rect x="326" y="225" width="88" height="16" rx="2" fill="#07090d"/>
-            <text x="370" y="236" text-anchor="middle" fill="#f59e0b" font-family="'JetBrains Mono',monospace" font-size="8">write state</text>
-
-            <!-- Firebase → Push -->
-            <line x1="540" y1="330" x2="540" y2="358" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrowA2)" style="animation: dashFlow 1s linear infinite"/>
-
-            <!-- Firebase PUSH → User2 CloudBeat -->
-            <path d="M660 390 Q715 390 768 265" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="8 4" marker-end="url(#arrowA2)" style="animation: dashFlow 1s linear infinite 0.3s"/>
-            <rect x="664" y="350" width="90" height="16" rx="2" fill="#07090d"/>
-            <text x="709" y="361" text-anchor="middle" fill="#f59e0b" font-family="'JetBrains Mono',monospace" font-size="8">push delta</text>
-
-            <!-- User2 → CloudBeat -->
-            <line x1="935" y1="156" x2="935" y2="198" stroke="#22c55e" stroke-width="1.5" marker-end="url(#arrowG2)" style="animation: dashFlow 1.5s linear infinite"/>
-
-            <!-- User2 → Firebase (join room) -->
-            <path d="M810 128 Q740 128 662 200" fill="none" stroke="#f59e0b" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#arrowA2)" opacity="0.6" style="animation: dashFlow 2s linear infinite"/>
-            <rect x="720" y="118" width="72" height="16" rx="2" fill="#07090d"/>
-            <text x="756" y="129" text-anchor="middle" fill="#f59e0b" font-family="'JetBrains Mono',monospace" font-size="8">join room</text>
-
-            <!-- Jam Code arrow -->
-            <path d="M245 380 Q245 430 480 430 Q540 430 540 418" fill="none" stroke="rgba(245,158,11,0.3)" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#arrowA2)" opacity="0.5"/>
-
-            <!-- CloudBeat2 → Speakers (user2) -->
-            <line x1="835" y1="270" x2="835" y2="318" stroke="#22c55e" stroke-width="1.5" marker-end="url(#arrowG2)" style="animation: dashFlow 1s linear infinite"/>
-
-            <!-- CloudBeat2 → Lag Correction -->
-            <line x1="915" y1="270" x2="915" y2="398" stroke="#06b6d4" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#arrowG2)" opacity="0.6" style="animation: dashFlow 2s linear infinite"/>
-
-            <!-- SYNC INDICATOR -->
-            <text x="540" y="490" text-anchor="middle" fill="rgba(34,197,94,0.6)" font-family="'Bebas Neue',sans-serif" font-size="14" letter-spacing="4">BOTH BROWSERS FETCH THE SAME AUDIO DIRECTLY FROM GITHUB — FIREBASE ONLY CARRIES METADATA</text>
-          </svg>
-        </div>
-
-        <!-- DETAIL CARDS: Jam -->
-        <div class="arch-detail-grid">
-          <div class="arch-detail-card active">
-            <div class="adc-icon">🏠</div>
-            <div class="adc-title">Host starts Jam</div>
-            <div class="adc-body">Host generates a 5-char room code and begins writing their playback state to Firebase on every play, pause, and seek event.</div>
-            <div class="adc-steps">
-              <div class="adc-step"><div class="adc-step-n">01</div><span>Random room code generated (e.g. AB3X7)</span></div>
-              <div class="adc-step"><div class="adc-step-n">02</div><span>Code becomes Firebase path: /jam/AB3X7/state</span></div>
-              <div class="adc-step"><div class="adc-step-n">03</div><span>Every play/pause/seek → jamWrite() fires</span></div>
-              <div class="adc-step"><div class="adc-step-n">04</div><span>Host shares code with listeners verbally / via chat</span></div>
-            </div>
-          </div>
-          <div class="arch-detail-card">
-            <div class="adc-icon">🔥</div>
-            <div class="adc-title">Firebase state object</div>
-            <div class="adc-body">The state written to Firebase is tiny — just enough metadata for listeners to find and seek the same track. No audio bytes go through Firebase.</div>
-            <div class="adc-steps">
-              <div class="adc-step"><div class="adc-step-n">01</div><span>trackName, repoOwner, repoName, repoBranch</span></div>
-              <div class="adc-step"><div class="adc-step-n">02</div><span>repoPath (full path of the audio file)</span></div>
-              <div class="adc-step"><div class="adc-step-n">03</div><span>position (seconds), paused (bool), ts (timestamp)</span></div>
-              <div class="adc-step"><div class="adc-step-n">04</div><span>nickname · email (display only)</span></div>
-            </div>
-          </div>
-          <div class="arch-detail-card">
-            <div class="adc-icon">👂</div>
-            <div class="adc-title">Listener syncs</div>
-            <div class="adc-body">User 2 enters the code, subscribes to that Firebase path, and receives state pushes in real-time via WebSocket. Each push triggers an audio seek with lag correction.</div>
-            <div class="adc-steps">
-              <div class="adc-step"><div class="adc-step-n">01</div><span>User 2 enters code → subscribes via onValue()</span></div>
-              <div class="adc-step"><div class="adc-step-n">02</div><span>State arrives → CloudBeat loads host's repo</span></div>
-              <div class="adc-step"><div class="adc-step-n">03</div><span>Fetches same audio from GitHub Raw CDN</span></div>
-              <div class="adc-step"><div class="adc-step-n">04</div><span>Seeks to: position + (Date.now() - ts) / 1000</span></div>
-            </div>
-          </div>
-          <div class="arch-detail-card">
-            <div class="adc-icon">🎮</div>
-            <div class="adc-title">Control handoff</div>
-            <div class="adc-body">Host can grant playback control to any listener. That listener becomes the writer; the host and all others become readers until control is reclaimed.</div>
-            <div class="adc-steps">
-              <div class="adc-step"><div class="adc-step-n">01</div><span>Host writes controls/{uid}/hasControl: true to Firebase</span></div>
-              <div class="adc-step"><div class="adc-step-n">02</div><span>All clients read jamControlledUid on every sync</span></div>
-              <div class="adc-step"><div class="adc-step-n">03</div><span>Only the controller's actions trigger jamWrite()</span></div>
-              <div class="adc-step"><div class="adc-step-n">04</div><span>Host can revoke at any time</span></div>
-            </div>
-          </div>
-        </div>
+      <div class="tech-card">
+        <div class="tc-icon">🎛️</div>
+        <div><div class="tc-name">Web Audio API</div><div class="tc-role">10-band EQ · Visualizer</div></div>
       </div>
-
-      <!-- ══ PANEL 3: GOOGLE DRIVE ══ -->
-      <div class="arch-panel" id="arch-drive">
-        <div class="arch-canvas">
-          <svg class="arch-svg" viewBox="0 0 1100 480" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <marker id="arrowC3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#06b6d4"/></marker>
-              <marker id="arrowO3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#ff6b1a"/></marker>
-              <marker id="arrowG3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#22c55e"/></marker>
-              <marker id="arrowW3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="rgba(255,255,255,0.5)"/></marker>
-            </defs>
-
-            <!-- BROWSER ZONE -->
-            <rect x="10" y="40" width="450" height="410" rx="10" fill="none" stroke="rgba(6,182,212,0.2)" stroke-width="1" stroke-dasharray="6 4"/>
-            <text x="22" y="58" fill="rgba(6,182,212,0.45)" font-family="'JetBrains Mono',monospace" font-size="10" letter-spacing="3">YOUR BROWSER</text>
-
-            <!-- GOOGLE INFRA ZONE -->
-            <rect x="530" y="40" width="550" height="410" rx="10" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" stroke-dasharray="6 4"/>
-            <text x="544" y="58" fill="rgba(255,255,255,0.25)" font-family="'JetBrains Mono',monospace" font-size="10" letter-spacing="3">GOOGLE INFRASTRUCTURE (YOUR ACCOUNT)</text>
-
-            <!-- CloudBeat App -->
-            <rect x="30" y="80" width="410" height="70" rx="6" fill="#0c0f16" stroke="rgba(255,107,26,0.5)" stroke-width="1.5"/>
-            <text x="235" y="108" text-anchor="middle" fill="#ff6b1a" font-family="'Bebas Neue',sans-serif" font-size="20" letter-spacing="3">CLOUDBEAT APP</text>
-            <text x="235" y="128" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">browser-only · your tokens stored in memory only</text>
-            <text x="235" y="142" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">access token never written to disk or server</text>
-
-            <!-- OAuth popup -->
-            <rect x="30" y="190" width="180" height="56" rx="6" fill="#0c0f16" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
-            <text x="120" y="214" text-anchor="middle" fill="#c4cdd8" font-family="'Bebas Neue',sans-serif" font-size="14" letter-spacing="2">OAUTH POPUP</text>
-            <text x="120" y="230" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">accounts.google.com</text>
-            <text x="120" y="244" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">user consents · token returned</text>
-
-            <!-- Blob URL / Audio Element -->
-            <rect x="30" y="290" width="200" height="56" rx="6" fill="#0c0f16" stroke="rgba(6,182,212,0.4)" stroke-width="1"/>
-            <text x="130" y="314" text-anchor="middle" fill="#06b6d4" font-family="'Bebas Neue',sans-serif" font-size="14" letter-spacing="2">BLOB URL</text>
-            <text x="130" y="330" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">createObjectURL(blob)</text>
-            <text x="130" y="344" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">audio.src = blob://... (local)</text>
-
-            <!-- Speakers -->
-            <rect x="260" y="300" width="160" height="46" rx="6" fill="#0c0f16" stroke="rgba(34,197,94,0.3)" stroke-width="1"/>
-            <text x="340" y="319" text-anchor="middle" fill="#22c55e" font-family="'Bebas Neue',sans-serif" font-size="14" letter-spacing="2">WEB AUDIO</text>
-            <text x="340" y="335" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">EQ → speakers</text>
-
-            <!-- Drive AppData -->
-            <rect x="30" y="390" width="410" height="46" rx="6" fill="rgba(6,182,212,0.04)" stroke="rgba(6,182,212,0.2)" stroke-width="1"/>
-            <text x="235" y="409" text-anchor="middle" fill="#06b6d4" font-family="'Bebas Neue',sans-serif" font-size="13" letter-spacing="2">DRIVE APPDATA SYNC</text>
-            <text x="235" y="426" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="8">cloudbeat.json: playlists + likes + settings · private · invisible to all Drive apps</text>
-
-            <!-- GOOGLE: OAuth Server -->
-            <rect x="550" y="80" width="220" height="60" rx="6" fill="#0c0f16" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
-            <text x="660" y="106" text-anchor="middle" fill="#c4cdd8" font-family="'Bebas Neue',sans-serif" font-size="16" letter-spacing="2">GOOGLE OAUTH</text>
-            <text x="660" y="124" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">oauth2.googleapis.com · token grant</text>
-
-            <!-- Drive API -->
-            <rect x="550" y="190" width="220" height="60" rx="6" fill="#0c0f16" stroke="rgba(6,182,212,0.4)" stroke-width="1"/>
-            <text x="660" y="216" text-anchor="middle" fill="#06b6d4" font-family="'Bebas Neue',sans-serif" font-size="16" letter-spacing="2">DRIVE API v3</text>
-            <text x="660" y="234" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">drive.googleapis.com · list + fetch</text>
-
-            <!-- Your Drive Files -->
-            <rect x="820" y="80" width="240" height="220" rx="6" fill="#0c0f16" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
-            <text x="940" y="106" text-anchor="middle" fill="#c4cdd8" font-family="'Bebas Neue',sans-serif" font-size="15" letter-spacing="2">YOUR DRIVE</text>
-            <text x="940" y="125" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="9">your personal Google Drive account</text>
-            <!-- File icons -->
-            <rect x="834" y="140" width="210" height="24" rx="3" fill="#121720"/>
-            <text x="848" y="156" fill="#f59e0b" font-family="'JetBrains Mono',monospace" font-size="9">📁 /My Music/</text>
-            <rect x="834" y="170" width="210" height="20" rx="3" fill="#0c0f16"/>
-            <text x="856" y="184" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="8">🎵 favourite.mp3</text>
-            <rect x="834" y="194" width="210" height="20" rx="3" fill="#0c0f16"/>
-            <text x="856" y="208" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="8">🎵 demo_track.wav</text>
-            <rect x="834" y="218" width="210" height="20" rx="3" fill="#0c0f16"/>
-            <text x="856" y="232" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="8">🎵 recording.flac</text>
-            <rect x="834" y="242" width="210" height="20" rx="3" fill="rgba(6,182,212,0.06)" stroke="rgba(6,182,212,0.2)" stroke-width="0.5"/>
-            <text x="856" y="256" fill="#06b6d4" font-family="'JetBrains Mono',monospace" font-size="8">📄 cloudbeat.json (AppData)</text>
-            <text x="940" y="288" text-anchor="middle" fill="#4a5568" font-family="'JetBrains Mono',monospace" font-size="8">private · your data only · no external access</text>
-
-            <!-- ═══ FLOW LINES ═══ -->
-            <!-- CloudBeat → OAuth popup -->
-            <line x1="120" y1="150" x2="120" y2="188" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arrowW3)" style="animation: dashFlow 2s linear infinite"/>
-
-            <!-- OAuth popup → Google OAuth -->
-            <path d="M210 218 Q380 218 380 110 Q380 110 548 110" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#arrowW3)" style="animation: dashFlow 1.8s linear infinite"/>
-            <rect x="360" y="100" width="72" height="16" rx="2" fill="#07090d"/>
-            <text x="396" y="111" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="'JetBrains Mono',monospace" font-size="8">auth request</text>
-
-            <!-- OAuth → CloudBeat (token back) -->
-            <path d="M548 130 Q360 130 360 155 Q360 155 240 155 L240 150" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#arrowW3)" opacity="0.7" style="animation: dashFlowRev 1.8s linear infinite"/>
-            <rect x="406" y="138" width="72" height="16" rx="2" fill="#07090d"/>
-            <text x="442" y="149" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="'JetBrains Mono',monospace" font-size="8">access token</text>
-
-            <!-- CloudBeat → Drive API (list files) -->
-            <path d="M440 130 Q495 130 495 220 Q495 220 548 220" fill="none" stroke="#06b6d4" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#arrowC3)" style="animation: dashFlow 1.4s linear infinite"/>
-            <rect x="452" y="195" width="72" height="16" rx="2" fill="#07090d"/>
-            <text x="488" y="206" text-anchor="middle" fill="#06b6d4" font-family="'JetBrains Mono',monospace" font-size="8">list files</text>
-
-            <!-- Drive API ↔ Drive -->
-            <line x1="770" y1="220" x2="818" y2="180" stroke="rgba(6,182,212,0.3)" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#arrowC3)" style="animation: dashFlow 1.4s linear infinite"/>
-            <line x1="818" y1="200" x2="770" y2="240" stroke="rgba(6,182,212,0.3)" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#arrowC3)" opacity="0.5" style="animation: dashFlowRev 1.4s linear infinite"/>
-
-            <!-- Drive API → CloudBeat (file as blob) -->
-            <path d="M548 240 Q495 240 495 310 Q495 310 440 320" fill="none" stroke="#ff6b1a" stroke-width="2" marker-end="url(#arrowO3)" style="animation: dashFlow 0.9s linear infinite"/>
-            <rect x="458" y="268" width="78" height="16" rx="2" fill="#07090d"/>
-            <text x="497" y="279" text-anchor="middle" fill="#ff6b1a" font-family="'JetBrains Mono',monospace" font-size="8">file blob bytes</text>
-
-            <!-- Blob → Web Audio -->
-            <line x1="230" y1="323" x2="258" y2="323" stroke="#06b6d4" stroke-width="1.5" marker-end="url(#arrowC3)" style="animation: dashFlow 1s linear infinite"/>
-
-            <!-- CloudBeat → Drive AppData (sync) -->
-            <line x1="235" y1="388" x2="235" y2="370" stroke="#06b6d4" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#arrowC3)" opacity="0.6" style="animation: dashFlow 3s linear infinite"/>
-            <!-- Drive AppData → actual Drive -->
-            <path d="M440 413 Q660 413 820 270" fill="none" stroke="#06b6d4" stroke-width="1" stroke-dasharray="4 4" opacity="0.3" marker-end="url(#arrowC3)" style="animation: dashFlow 3s linear infinite"/>
-
-            <text x="555" y="460" text-anchor="middle" fill="rgba(34,197,94,0.5)" font-family="'Bebas Neue',sans-serif" font-size="11" letter-spacing="3">AUDIO NEVER LEAVES GOOGLE'S SERVERS TO CLOUDBEAT — BLOB GOES DIRECTLY TO YOUR BROWSER'S AUDIO ELEMENT</text>
-          </svg>
-        </div>
-
-        <!-- DETAIL CARDS: Drive -->
-        <div class="arch-detail-grid">
-          <div class="arch-detail-card active">
-            <div class="adc-icon">🔐</div>
-            <div class="adc-title">OAuth 2.0 Sign-in</div>
-            <div class="adc-body">Google handles the entire authentication flow. CloudBeat never sees your password — only the access token that Google grants.</div>
-            <div class="adc-steps">
-              <div class="adc-step"><div class="adc-step-n">01</div><span>CloudBeat opens accounts.google.com popup</span></div>
-              <div class="adc-step"><div class="adc-step-n">02</div><span>You consent to Drive file access</span></div>
-              <div class="adc-step"><div class="adc-step-n">03</div><span>Google returns an access token to the browser</span></div>
-              <div class="adc-step"><div class="adc-step-n">04</div><span>Token stored in JS memory only — never on disk</span></div>
-            </div>
-          </div>
-          <div class="arch-detail-card">
-            <div class="adc-icon">📋</div>
-            <div class="adc-title">File Discovery</div>
-            <div class="adc-body">CloudBeat calls the Drive API to list your audio and video files. It scans folders you navigate and shows them in the Drive view.</div>
-            <div class="adc-steps">
-              <div class="adc-step"><div class="adc-step-n">01</div><span>GET drive.googleapis.com/v3/files</span></div>
-              <div class="adc-step"><div class="adc-step-n">02</div><span>Filter: mimeType contains 'audio/' or 'video/'</span></div>
-              <div class="adc-step"><div class="adc-step-n">03</div><span>Recursive folder navigation on demand</span></div>
-              <div class="adc-step"><div class="adc-step-n">04</div><span>File metadata only — no content yet</span></div>
-            </div>
-          </div>
-          <div class="arch-detail-card">
-            <div class="adc-icon">💧</div>
-            <div class="adc-title">Blob Streaming</div>
-            <div class="adc-body">When you play a Drive file, CloudBeat fetches it as a binary Blob via the Drive API and creates a local object URL. No audio data passes through any CloudBeat server.</div>
-            <div class="adc-steps">
-              <div class="adc-step"><div class="adc-step-n">01</div><span>fetch Drive file download URL with auth header</span></div>
-              <div class="adc-step"><div class="adc-step-n">02</div><span>Response streamed as a Blob</span></div>
-              <div class="adc-step"><div class="adc-step-n">03</div><span>URL.createObjectURL(blob) → blob://...</span></div>
-              <div class="adc-step"><div class="adc-step-n">04</div><span>audio.src = blob:// → plays locally, no CORS issue</span></div>
-            </div>
-          </div>
-          <div class="arch-detail-card">
-            <div class="adc-icon">☁️</div>
-            <div class="adc-title">AppData Sync</div>
-            <div class="adc-body">Your playlists, liked songs, EQ presets, and settings are saved to a hidden cloudbeat.json file in your Drive's AppData folder — invisible to all other Drive apps.</div>
-            <div class="adc-steps">
-              <div class="adc-step"><div class="adc-step-n">01</div><span>Writes to Drive AppData (appDataFolder scope)</span></div>
-              <div class="adc-step"><div class="adc-step-n">02</div><span>Not visible in your regular Drive file list</span></div>
-              <div class="adc-step"><div class="adc-step-n">03</div><span>Syncs automatically on sign-in across devices</span></div>
-              <div class="adc-step"><div class="adc-step-n">04</div><span>Deletable anytime from Drive settings</span></div>
-            </div>
-          </div>
-        </div>
+      <div class="tech-card">
+        <div class="tc-icon">📱</div>
+        <div><div class="tc-name">Service Worker</div><div class="tc-role">PWA · Offline cache</div></div>
       </div>
-
-    </div><!-- /arch-diagram -->
-
-    <!-- LEGEND -->
-    <div class="arch-legend reveal">
-      <div class="leg"><div class="leg-line audio"></div>Audio stream (bytes)</div>
-      <div class="leg"><div class="leg-line firebase"></div>Firebase sync data</div>
-      <div class="leg"><div class="leg-line drive"></div>Google Drive / OAuth</div>
-      <div class="leg"><div class="leg-line api"></div>API request / response</div>
-      <div class="leg"><div class="leg-line bi"></div>Bidirectional</div>
-    </div>
-
-  </div><!-- /inner -->
-</div><!-- /architecture -->
-
-<!-- DESIGNER -->
-<section id="designer">
-  <div class="designer-inner">
-    <div class="reveal">
-      <div class="section-label">// Origin</div>
-      <h2 class="section-title">Built With<br>Purpose, Not<br>Profit</h2>
-      <div class="designer-badge">
-        <div class="designer-badge-icon">A</div>
-        <div>
-          <div class="designer-badge-text">Designed & conceptualised by</div>
-          <div class="designer-badge-name">Aayan Singh · India 🇮🇳</div>
-        </div>
+      <div class="tech-card">
+        <div class="tc-icon">🎮</div>
+        <div><div class="tc-name">Media Session API</div><div class="tc-role">Lock screen · OS controls</div></div>
       </div>
-      <div class="designer-quote">
-        "I wanted a player that treats your music — <em>your own files</em> — with the same care that commercial apps treat their catalogues. <em>No compromise.</em>"
+      <div class="tech-card">
+        <div class="tc-icon">🖼️</div>
+        <div><div class="tc-name">Last.fm API</div><div class="tc-role">Artwork · Metadata fetch</div></div>
       </div>
-      <p style="font-size:13px;color:var(--text-dim);line-height:1.8;">CloudBeat was conceived and designed by Aayan Singh as a passion project — a love letter to music and to everyone who has ever wanted a better way to listen to the audio they own. Every design decision, every animation, every feature was thought through by Aayan before being brought to life. The interface was built with Claude (Anthropic) as the code-generation partner.</p>
-    </div>
-    <div class="designer-cards reveal">
-      <div class="designer-card">
-        <div class="designer-card-icon">💡</div>
-        <div>
-          <div class="designer-card-title">The Idea</div>
-          <div class="designer-card-text">Aayan envisioned a world where anyone — a musician recording demos, a student with study playlists, a family with home recordings — could have a premium listening experience with files they already own, completely free.</div>
-        </div>
+      <div class="tech-card">
+        <div class="tc-icon">💾</div>
+        <div><div class="tc-name">localStorage</div><div class="tc-role">Guest sessions · Settings</div></div>
       </div>
-      <div class="designer-card">
-        <div class="designer-card-icon">🎨</div>
-        <div>
-          <div class="designer-card-title">The Design</div>
-          <div class="designer-card-text">The dark, editorial aesthetic — Bebas Neue headers, JetBrains Mono data labels, the orange accent system — was entirely Aayan's visual direction. A music player that looks as good as it sounds.</div>
-        </div>
+      <div class="tech-card">
+        <div class="tc-icon">🎨</div>
+        <div><div class="tc-name">Bebas Neue · Syne · JetBrains Mono</div><div class="tc-role">Google Fonts · Typography</div></div>
       </div>
-      <div class="designer-card">
-        <div class="designer-card-icon">🤝</div>
-        <div>
-          <div class="designer-card-title">The Promise</div>
-          <div class="designer-card-text">Aayan's commitment: CloudBeat will never run ads, never charge users, never sell data, and never generate a single rupee of income from the people who use it. That promise is unconditional.</div>
-        </div>
+      <div class="tech-card">
+        <div class="tc-icon">⚡</div>
+        <div><div class="tc-name">Vanilla JS</div><div class="tc-role">Zero dependencies · 1 file</div></div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- DISCLAIMER -->
-<div id="disclaimer">
-  <div class="inner">
-    <div class="section-label reveal">// Legal & Ethical Stance</div>
-    <h2 class="section-title reveal">Full<br>Transparency.</h2>
-    <p class="section-sub reveal">CloudBeat has nothing to hide. Here is everything you need to know about how it operates, what it does, and what it will never do.</p>
-
-    <div class="disclaimer-grid reveal">
-      <div class="disc-card">
-        <div class="disc-card-head">
-          <div class="disc-dot cyan"></div>
-          <div class="disc-card-title">Zero Commercial Activity</div>
-        </div>
-        <div class="disc-card-text">
-          The owner, designer (Aayan Singh), and anyone affiliated with the creation or maintenance of CloudBeat <strong>does not earn, collect, or derive any income, revenue, profit, or monetary compensation</strong> — directly or indirectly — from this website or its operation.<br><br>
-          This includes advertising, sponsorships, affiliate links, donations in exchange for features, subscription fees, or any other form of financial gain. <strong>No monetization exists on this platform. None is planned.</strong>
-        </div>
-        <div class="disc-highlight">
-          // The creator of CloudBeat shall never make any source of revenue from this website. This is an unconditional, permanent commitment.
-        </div>
+<section class="disclaimer-section" id="disclaimer">
+  <div class="disclaimer-inner">
+    <div class="reveal">
+      <div class="section-label">Legal & Ethics</div>
+      <h2 class="section-title">NON-COMMERCIAL · DISCLAIMER · ACKNOWLEDGMENT</h2>
+    </div>
+    <div class="disc-tabs reveal">
+      <button class="disc-tab active" onclick="switchTab('nc',this)">Non-Commercial</button>
+      <button class="disc-tab" onclick="switchTab('disc',this)">Disclaimer</button>
+      <button class="disc-tab" onclick="switchTab('ack',this)">Acknowledgments</button>
+      <button class="disc-tab" onclick="switchTab('privacy',this)">Privacy</button>
+    </div>
+    <div class="disc-panel active" id="tab-nc">
+      <div class="disc-card reveal">
+        <h3>🚫 Non-Commercial Statement</h3>
+        <div class="disc-highlight">CloudBeat is a free, open-source personal project. It is not for sale, not monetized, and not affiliated with any commercial entity.</div>
+        <p>CloudBeat was built as a personal music player tool and is shared freely with the community. The developer receives no payment, subscription fees, or advertising revenue from this project.</p>
+        <p>CloudBeat does not host, store, distribute, or re-sell any music. It only provides an interface for users to access music they already own or have rights to access — from their own GitHub repositories or Google Drive accounts.</p>
+        <div class="disc-warn">⚠️ Users are fully responsible for ensuring they have the right to play, stream, or share any music accessed through CloudBeat. The developer is not responsible for any copyright infringement by end users.</div>
+        <p>The Jam Session feature syncs playback state (track names, seek positions) — it does not relay audio streams. Each listener fetches audio independently from the same source repository.</p>
       </div>
-
-      <div class="disc-card">
-        <div class="disc-card-head">
-          <div class="disc-dot green"></div>
-          <div class="disc-card-title">Anti-Piracy & Creator Support</div>
-        </div>
-        <div class="disc-card-text">
-          CloudBeat <strong>strongly and unconditionally opposes piracy in every form.</strong> The unauthorized reproduction, distribution, or streaming of copyrighted music is illegal and causes direct harm to the artists, composers, producers, and all creative professionals who make music possible.<br><br>
-          This platform is designed strictly for <strong>personal-use audio files that you own or have legal rights to play.</strong> It is not a substitute for licensed streaming services. If you love a song — please support its creator on Spotify, Apple Music, or by purchasing it.
-        </div>
-        <div class="disc-highlight" style="border-left-color:var(--green);">
-          // Music is art. Art deserves respect. Artists deserve to be compensated for their work. Please support them.
-        </div>
+    </div>
+    <div class="disc-panel" id="tab-disc">
+      <div class="disc-card reveal">
+        <h3>⚖️ Disclaimer</h3>
+        <div class="disc-highlight">CloudBeat is provided "as is" without warranty of any kind, express or implied.</div>
+        <p>The developer makes no representations or warranties regarding the accuracy, reliability, or completeness of CloudBeat. Use at your own risk.</p>
+        <p><strong style="color:#fff">Regarding Music & Copyright:</strong> CloudBeat does not condone piracy. Users must only load music they have the legal right to play. The app cannot enforce this — it is the user's responsibility to comply with applicable copyright laws in their jurisdiction.</p>
+        <p><strong style="color:#fff">Regarding Third-Party APIs:</strong> CloudBeat integrates with Google Drive API, GitHub API, Firebase, and Last.fm. Use of these services is subject to their respective Terms of Service. The developer is not responsible for service outages, API changes, or access revocations by these providers.</p>
+        <p><strong style="color:#fff">Regarding Jam Sessions:</strong> Firebase Realtime Database usage is subject to Firebase's free tier limits. In extremely high usage scenarios, Jam sessions may experience delays. The developer is not responsible for Firebase service availability.</p>
+        <div class="disc-warn">⚠️ CloudBeat accesses your Google Drive and GitHub only as authorized by your own credentials. Your data never passes through the developer's servers — all API calls are made directly from your browser to Google/GitHub/Firebase.</div>
       </div>
-
-      <div class="disc-card">
-        <div class="disc-card-head">
-          <div class="disc-dot orange"></div>
-          <div class="disc-card-title">Content Ownership</div>
+    </div>
+    <div class="disc-panel" id="tab-ack">
+      <div class="disc-card reveal">
+        <h3>🙏 Acknowledgments</h3>
+        <p>CloudBeat would not be possible without these incredible free services and open-source tools:</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin:20px 0;">
+          <div style="padding:14px;background:var(--surface3);border:1px solid var(--border);"><strong style="color:#fff">Google Fonts</strong><br><span style="font-size:11px;color:var(--text-dim)">Bebas Neue, Syne, JetBrains Mono</span></div>
+          <div style="padding:14px;background:var(--surface3);border:1px solid var(--border);"><strong style="color:#fff">Firebase</strong><br><span style="font-size:11px;color:var(--text-dim)">Free Realtime DB for Jam sessions</span></div>
+          <div style="padding:14px;background:var(--surface3);border:1px solid var(--border);"><strong style="color:#fff">GitHub</strong><br><span style="font-size:11px;color:var(--text-dim)">Free raw CDN for audio streaming</span></div>
+          <div style="padding:14px;background:var(--surface3);border:1px solid var(--border);"><strong style="color:#fff">Google APIs</strong><br><span style="font-size:11px;color:var(--text-dim)">Drive v3 + OAuth 2.0</span></div>
+          <div style="padding:14px;background:var(--surface3);border:1px solid var(--border);"><strong style="color:#fff">Last.fm</strong><br><span style="font-size:11px;color:var(--text-dim)">Album artwork metadata API</span></div>
+          <div style="padding:14px;background:var(--surface3);border:1px solid var(--border);"><strong style="color:#fff">Web Standards</strong><br><span style="font-size:11px;color:var(--text-dim)">HTML5 Audio · Web Audio · PWA</span></div>
         </div>
-        <div class="disc-card-text">
-          CloudBeat <strong>does not own, host, or distribute any music or media content.</strong> It is a browser-based tool that connects to sources you configure — your GitHub repositories, your Google Drive, your Firebase database.<br><br>
-          Users are solely and entirely responsible for the content stored in their repositories and drives. CloudBeat is a player, not a publisher. The developer has no access to, visibility of, or control over what users stream.
-        </div>
-        <div class="disc-highlight">
-          // CloudBeat never stores, transmits, or profits from user audio content.
-        </div>
+        <p>Special thanks to every user who shared feedback, reported bugs, and helped make CloudBeat better. This project exists because of you.</p>
       </div>
-
-      <div class="disc-card">
-        <div class="disc-card-head">
-          <div class="disc-dot amber"></div>
-          <div class="disc-card-title">Privacy by Design</div>
-        </div>
-        <div class="disc-card-text">
-          CloudBeat was built with privacy as a foundational principle, not an afterthought. <strong>No user data is sent to any CloudBeat-controlled server</strong> — because no such server exists.<br><br>
-          Google credentials are processed entirely via Google's own OAuth. Firebase data goes to your database. Drive data goes to your Drive. Listen stats are stored in your browser's localStorage. <strong>The developer sees nothing.</strong>
-        </div>
-        <div class="disc-highlight" style="border-left-color:var(--amber);">
-          // Your data is yours. CloudBeat is a tool, not a data collector.
-        </div>
+    </div>
+    <div class="disc-panel" id="tab-privacy">
+      <div class="disc-card reveal">
+        <h3>🔒 Privacy</h3>
+        <div class="disc-highlight">CloudBeat collects zero data. There are no analytics, no tracking, and no telemetry of any kind.</div>
+        <p><strong style="color:#fff">What CloudBeat stores:</strong> Your settings, playlists, liked songs, EQ, and theme are stored locally in your browser's localStorage (guest mode) or in a single JSON file in your own Google Drive (Google mode). This data never leaves your device unless you explicitly sync it yourself.</p>
+        <p><strong style="color:#fff">What CloudBeat does NOT collect:</strong> No email addresses, no listening history sent to the developer, no device fingerprinting, no cookies, no analytics SDKs.</p>
+        <p><strong style="color:#fff">Firebase Jam Sessions:</strong> When you host or join a Jam, the room code, your chosen display name, and playback state are written to Firebase. This data is temporary — it is deleted when the session ends. It is readable by anyone who knows the room code.</p>
+        <p><strong style="color:#fff">Google OAuth:</strong> When you sign in with Google, your name, profile photo, and email are used to display your identity in the UI. They are stored in memory only — not in localStorage or any server.</p>
+        <div class="disc-warn">⚠️ Do not share your Jam room code publicly if you want to keep your listening session private. Anyone with the code can join and see what's playing.</div>
       </div>
     </div>
   </div>
-</div>
+</section>
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-logo">CloudBeat</div>
-  <div class="footer-center">
-    Designed & conceptualised by <a href="#">Aayan Singh</a> · Made in India 🇮🇳<br>
-    Code generated with Claude (Anthropic) · Non-commercial · No ads · No revenue · Ever.<br>
-    <span style="color:var(--text-muted);font-size:9px;">// Your music. Your cloud. Your way.</span>
-  </div>
-  <div class="footer-right">
-    <span style="color:var(--orange);">v1 STABLE</span><br>
-    Zero Commercial Intent<br>
-    Support Original Artists
+  <div class="footer-inner">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;" class="reveal">
+      <div>
+        <div class="footer-logo">CLOUDBEAT</div>
+        <div class="footer-tagline">// your music, everywhere</div>
+        <p style="font-size:12px;color:var(--text-dim);margin-top:16px;line-height:1.8;max-width:360px;">A free, open-source browser music player. Stream from GitHub, sync with Drive, vibe with friends via Jam Sessions. Single HTML file. Zero cost. Forever.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--text-dim);margin-bottom:14px;text-transform:uppercase;">Links</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <a href="#features" style="font-size:13px;font-weight:700;color:var(--text-dim);transition:color .2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-dim)'">Features</a>
+            <a href="#how" style="font-size:13px;font-weight:700;color:var(--text-dim);transition:color .2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-dim)'">How It Works</a>
+            <a href="#flowchart" style="font-size:13px;font-weight:700;color:var(--text-dim);transition:color .2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-dim)'">Jam Flow</a>
+            <a href="#disclaimer" style="font-size:13px;font-weight:700;color:var(--text-dim);transition:color .2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-dim)'">Disclaimer</a>
+          </div>
+        </div>
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--text-dim);margin-bottom:14px;text-transform:uppercase;">Tech</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <span style="font-size:12px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;">Firebase Realtime DB</span>
+            <span style="font-size:12px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;">GitHub Raw API</span>
+            <span style="font-size:12px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;">Google Drive v3</span>
+            <span style="font-size:12px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;">Web Audio API</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2024 CloudBeat · Non-commercial · Open Source · Built with 🧡</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim);">v1.0 · Single HTML File · Zero Dependencies</div>
+    </div>
   </div>
 </footer>
+
+<!-- TOOLTIP -->
+<div class="fc-tooltip" id="fc-tooltip">
+  <div class="fc-tt-step" id="fc-tt-step"></div>
+  <div class="fc-tt-title" id="fc-tt-title"></div>
+  <div class="fc-tt-desc" id="fc-tt-desc"></div>
+</div>
 
 <script>
 // ── CURSOR ──
@@ -1342,47 +813,154 @@ document.addEventListener('mousemove', e => {
   cursor.style.left=cx+'px'; cursor.style.top=cy+'px';
 });
 (function animRing(){
-  rx+=(cx-rx)*.15; ry+=(cy-ry)*.15;
+  rx+=(cx-rx)*.12; ry+=(cy-ry)*.12;
   ring.style.left=rx+'px'; ring.style.top=ry+'px';
   requestAnimationFrame(animRing);
 })();
-document.querySelectorAll('a,button,.feat-card,.int-card,.designer-card,.flow-node').forEach(el=>{
-  el.addEventListener('mouseenter',()=>{cursor.style.width='18px';cursor.style.height='18px';});
-  el.addEventListener('mouseleave',()=>{cursor.style.width='10px';cursor.style.height='10px';});
+document.querySelectorAll('a,button,.fc-node,.disc-tab').forEach(el => {
+  el.addEventListener('mouseenter', () => { cursor.style.width='14px'; cursor.style.height='14px'; });
+  el.addEventListener('mouseleave', () => { cursor.style.width='8px'; cursor.style.height='8px'; });
 });
 
 // ── SCROLL REVEAL ──
 const reveals = document.querySelectorAll('.reveal');
-const observer = new IntersectionObserver((entries)=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting){ e.target.classList.add('visible'); observer.unobserve(e.target); }
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, {threshold: 0.08});
+reveals.forEach(r => revealObserver.observe(r));
+
+// ── TABS ──
+function switchTab(id, btn) {
+  document.querySelectorAll('.disc-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.disc-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── FLOWCHART ARROWS ──
+function getCenter(el) {
+  const canvas = document.getElementById('fc-canvas');
+  const cr = canvas.getBoundingClientRect();
+  const r = el.getBoundingClientRect();
+  return {
+    x: r.left - cr.left + r.width / 2,
+    y: r.top - cr.top + r.height / 2,
+    top: r.top - cr.top,
+    bot: r.top - cr.top + r.height,
+    left: r.left - cr.left,
+    right: r.left - cr.left + r.width
+  };
+}
+
+function drawArrow(svg, x1,y1,x2,y2, color, label='', dashed=false) {
+  const dx = x2-x1, dy = y2-y1;
+  const len = Math.sqrt(dx*dx+dy*dy);
+  const ux = dx/len, uy = dy/len;
+  const endX = x2 - ux*10, endY = y2 - uy*10;
+  const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+  const cx = (x1+x2)/2, cy2 = (y1+y2)/2;
+  path.setAttribute('d', `M${x1},${y1} L${endX},${endY}`);
+  path.setAttribute('fill','none');
+  path.setAttribute('stroke', color);
+  path.setAttribute('stroke-width','1.5');
+  if(dashed) path.setAttribute('stroke-dasharray','6,4');
+  const markerId = color === '#ff6b1a' ? 'arr-orange' : color === '#a78bfa' ? 'arr-purple' : color === '#22c55e' ? 'arr-green' : color === '#f59e0b' ? 'arr-yellow' : color === '#06b6d4' ? 'arr-cyan' : 'arr';
+  path.setAttribute('marker-end',`url(#${markerId})`);
+  svg.appendChild(path);
+  if(label) {
+    const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x', cx+4); t.setAttribute('y', cy2-5);
+    t.setAttribute('class','fc-label-text');
+    t.textContent = label;
+    svg.appendChild(t);
+  }
+}
+
+function drawCurvedArrow(svg, x1,y1,x2,y2, color, label='', cx_off=0) {
+  const midX = (x1+x2)/2 + cx_off, midY = (y1+y2)/2;
+  const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+  const dx = x2-x1, dy = y2-y1;
+  const len = Math.sqrt(dx*dx+dy*dy);
+  const ux = dx/len, uy = dy/len;
+  const endX = x2 - ux*10, endY = y2 - uy*10;
+  path.setAttribute('d', `M${x1},${y1} Q${midX},${midY-30} ${endX},${endY}`);
+  path.setAttribute('fill','none');
+  path.setAttribute('stroke', color);
+  path.setAttribute('stroke-width','1.5');
+  const markerId = color === '#ff6b1a' ? 'arr-orange' : color === '#a78bfa' ? 'arr-purple' : color === '#22c55e' ? 'arr-green' : color === '#f59e0b' ? 'arr-yellow' : color === '#06b6d4' ? 'arr-cyan' : 'arr';
+  path.setAttribute('marker-end',`url(#${markerId})`);
+  svg.appendChild(path);
+  if(label) {
+    const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x', midX+4); t.setAttribute('y', midY-36);
+    t.setAttribute('class','fc-label-text');
+    t.textContent = label;
+    svg.appendChild(t);
+  }
+}
+
+function drawFlowchart() {
+  const svg = document.getElementById('fc-svg');
+  // Clear old arrows
+  while(svg.children.length > 1) svg.removeChild(svg.lastChild);
+
+  const host = getCenter(document.getElementById('n-host'));
+  const listener = getCenter(document.getElementById('n-listener'));
+  const app = getCenter(document.getElementById('n-app'));
+  const jamcode = getCenter(document.getElementById('n-jamcode'));
+  const fb = getCenter(document.getElementById('n-firebase-db'));
+  const github = getCenter(document.getElementById('n-github'));
+  const drive = getCenter(document.getElementById('n-drive'));
+  const gauth = getCenter(document.getElementById('n-google-auth'));
+  const local = getCenter(document.getElementById('n-local'));
+  const fbinit = getCenter(document.getElementById('n-firebase-auth'));
+
+  // Host → App
+  drawArrow(svg, host.x, host.bot, app.left, app.y, '#ff6b1a', 'hosts jam');
+  // Listener → App
+  drawArrow(svg, listener.x, listener.bot, app.right, app.y, '#a78bfa', 'joins via code');
+  // App → JamCode
+  drawArrow(svg, app.x, app.bot, jamcode.x, jamcode.top, '#06b6d4', 'generates');
+  // JamCode → Firebase
+  drawArrow(svg, jamcode.x, jamcode.bot, fb.x, fb.top, '#f59e0b', 'writes rooms/{code}');
+  // Firebase → Listener (sync)
+  drawCurvedArrow(svg, fb.right, fb.y, listener.x, listener.bot, '#a78bfa', 'realtime sync', 80);
+  // App → GitHub
+  drawArrow(svg, app.left, app.y, github.right, github.y, '#ffffff', 'fetch songs');
+  // App → Drive
+  drawArrow(svg, app.right, app.y, drive.left, drive.y, '#22c55e', 'stream audio');
+  // Google Auth → App
+  drawArrow(svg, gauth.x, gauth.top, app.x-60, app.bot, '#ec4899', 'access token', );
+  // Firebase init → Firebase DB
+  drawArrow(svg, fbinit.x, fbinit.top, fb.x+30, fb.bot, '#f59e0b', 'SDK init');
+  // Local → App
+  drawArrow(svg, local.x, local.top, app.x+60, app.bot, '#ec4899', 'save/load');
+  // GitHub → App (return)
+  drawCurvedArrow(svg, github.top-20, github.y, app.left, app.bot-20, '#ffffff', 'raw audio', -60);
+}
+
+// Tooltip
+const tooltip = document.getElementById('fc-tooltip');
+document.querySelectorAll('.fc-node').forEach(node => {
+  node.addEventListener('click', e => {
+    const title = node.dataset.title;
+    const desc = node.dataset.desc;
+    const step = node.dataset.step;
+    document.getElementById('fc-tt-title').textContent = title;
+    document.getElementById('fc-tt-desc').textContent = desc;
+    document.getElementById('fc-tt-step').textContent = step;
+    tooltip.classList.add('open');
+    const x = Math.min(e.clientX+16, window.innerWidth-280);
+    const y = Math.min(e.clientY+16, window.innerHeight-200);
+    tooltip.style.left = x+'px'; tooltip.style.top = y+'px';
+    e.stopPropagation();
   });
-},{threshold:0.12});
-reveals.forEach(r=>observer.observe(r));
-
-// ── WAVEFORM ──
-const wf = document.getElementById('waveform');
-const heights = [10,16,28,40,32,24,36,44,30,18,22,38,48,34,26,20,42,16,30,24,36,14,40,28,18,44,22,32,12,20];
-heights.forEach((h,i)=>{
-  const b = document.createElement('div');
-  b.className = 'wbar' + (i>8&&i<22?' active':'');
-  b.style.setProperty('--min', Math.max(4,h/3)+'px');
-  b.style.setProperty('--max', h+'px');
-  b.style.setProperty('--d', (.6+Math.random()*.8)+'s');
-  b.style.animationDelay = (Math.random()*-.8)+'s';
-  wf.appendChild(b);
 });
+document.addEventListener('click', () => tooltip.classList.remove('open'));
 
-// ── NAV SCROLL EFFECT ──
-window.addEventListener('scroll',()=>{
-  const nav=document.querySelector('nav');
-  nav.style.background = window.scrollY > 60 ? 'rgba(4,5,8,.95)' : 'rgba(7,9,13,.7)';
-});
-
-// ── STAGGER FLOW NODES ──
-document.querySelectorAll('.flow-node').forEach((n,i)=>{
-  n.style.animationDelay=(i*.1)+'s';
-});
+// Draw after layout
+setTimeout(drawFlowchart, 300);
+window.addEventListener('resize', () => setTimeout(drawFlowchart, 100));
 </script>
 </body>
 </html>
